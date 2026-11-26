@@ -1,5 +1,5 @@
-const CACHE = "daftar-asaar-v3";
-const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
+const CACHE = "daftar-asaar-sharaf-v4";
+const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon-sharaf-192.png", "./icon-sharaf-512.png"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE)));
   self.skipWaiting();
