@@ -19,11 +19,11 @@ main{max-width:1050px;margin:auto;padding:14px}
 .ratebox{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
 .rate{background:#ffffff17;border:1px solid #ffffff30;border-radius:12px;padding:10px}
 .rate small{display:block;color:#d5e5dc;margin-bottom:6px}.rate strong{font-size:18px}
-.tabs{display:flex;gap:8px;overflow:auto;margin:14px 0}
+.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;margin:14px 0}
 button,.btn{border:0;border-radius:10px;padding:11px 14px;font-weight:700;font-size:14px;cursor:pointer;background:var(--blue);color:#fff}
 button.secondary{background:#e8f1fc;color:var(--blue)}button.danger{background:#fff0ee;color:var(--red)}
-.tabs button{white-space:nowrap}.tabs button.active{background:var(--blue2);outline:2px solid #7ebaff}.card{box-shadow:0 5px 18px #102d5010}.tabs button{box-shadow:0 2px 8px #102d5012}
-.panel{display:none}.panel.active{display:block}
+.tabs button{white-space:normal;min-height:44px;line-height:1.35}.tabs button.active{background:var(--blue2);outline:2px solid #7ebaff}.card{box-shadow:0 5px 18px #102d5010}.tabs button{box-shadow:0 2px 8px #102d5012}
+.panel{display:none;position:relative;isolation:isolate}.panel.active{display:block}.panel::after{content:'';position:absolute;top:10px;left:10px;width:58px;height:58px;background:url('./sharaf-transparent.png') center/contain no-repeat;opacity:.13;pointer-events:none;z-index:0}
 .card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px #10251a08}
 .row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.row>*{flex:1}
 label{font-size:13px;color:var(--muted);display:block;margin:8px 0 5px}
@@ -75,6 +75,7 @@ td .actions{display:flex;gap:5px}td button{padding:7px 9px;font-size:12px}
     <button data-tab="news">الأخبار</button>
     <button data-tab="matches">المباريات اليومية</button>
     <button data-tab="wisdom">التقويم والحكمة</button>
+    <button data-tab="shamcash">شام كاش – طريقة الدفع</button>
   </div>
 
   <section id="products" class="panel active">
@@ -256,8 +257,21 @@ td .actions{display:flex;gap:5px}td button{padding:7px 9px;font-size:12px}
       <div class="hint" id="backupMsg"></div>
     </div>
   </section>
+
+  <section id="shamcash" class="panel">
+    <div class="card" style="text-align:center">
+      <h2>الدفع عبر شام كاش</h2>
+      <p class="hint">امسح رمز QR لإتمام عملية الدفع عبر تطبيق شام كاش.</p>
+      <p><strong>اسم الحساب: عبدالرحمن الكريم شرف</strong></p>
+      <a href="./sham-cash-qr.jpg" target="_blank" rel="noopener" title="فتح رمز QR بالحجم الكامل">
+        <img src="./sham-cash-qr.jpg" alt="رمز الدفع عبر شام كاش – عبدالرحمن الكريم شرف"
+             style="display:block;width:min(100%,380px);height:auto;margin:12px auto;border-radius:12px">
+      </a>
+      <p class="hint">اضغط على الرمز لفتحه بالحجم الكامل.</p>
+    </div>
+  </section>
 </main>
-<footer>تطبيق الأسعار السورية شرف — تحفظ البيانات محلياً على هذا الجهاز</footer>
+<footer style="text-align:center;line-height:1.9">تطبيق الأسعار السورية – شرف<br>جميع الحقوق محفوظة © <span id="copyrightYear"></span><br>تصميم وإنشاء: عبد الرحمن شرف<br>صُنع بعناية لخدمة المستخدمين</footer>
 <script>
 const DB_NAME='DaftarAlAsaarDB', STORE='products';
 let db, products=[], settings={rateType:'parallel',parallelRate:0,officialRate:0,lastRateUpdate:null,rateSource:'manual',theme:'dark'};
@@ -452,6 +466,7 @@ updateCalendar();showWisdom();showFact();setInterval(updateCalendar,60000);
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));
 }
+$('copyrightYear').textContent=new Date().getFullYear();
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab));if(b.dataset.tab==='news')refreshNews();if(b.dataset.tab==='matches'){refreshMatches();startLiveMatchRefresh()}});
 $('printBtn').onclick=()=>window.print();
 (async()=>{try{db=await openDB();const saved=localStorage.getItem('daftar_settings');if(saved)settings={...settings,...JSON.parse(saved)};applyTheme(settings.theme||'light');updateRateUI();await load();await migrateUsdBase();if(rate()>0)await repriceProducts();updateRateUI();refreshRates();refreshMetals();refreshPrayerTimes();setInterval(()=>{if(document.visibilityState==='visible'){refreshRates();refreshMetals();refreshPrayerTimes()}},60*60*1000)}catch(e){alert('تعذر فتح قاعدة البيانات في هذا المتصفح. يرجى استخدام Chrome حديث.')}})();
