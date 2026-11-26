@@ -1,4 +1,4 @@
-const CACHE = "daftar-asaar-sharaf-v14";
+const CACHE = "daftar-asaar-sharaf-v15";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon-sharaf-192.png", "./icon-sharaf-512.png"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE)));
@@ -10,7 +10,7 @@ self.addEventListener("activate", event => {
 });
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
-  if (["liraty.com", "aladhan.com", "api.gold-api.com"].includes(new URL(event.request.url).hostname)) return;
+  if (["liraty.com", "aladhan.com", "api.gold-api.com", "api.rss2json.com", "news.google.com"].includes(new URL(event.request.url).hostname)) return;
   event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
     const copy = response.clone();
     caches.open(CACHE).then(cache => cache.put(event.request, copy));

@@ -49,6 +49,7 @@ td .actions{display:flex;gap:5px}td button{padding:7px 9px;font-size:12px}
 .calc-help{text-align:center;margin-top:10px}
 .profit-positive{color:#15945b;font-weight:700}.section-tools{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.section-tools>*{flex:1;min-width:130px}footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
 @media(max-width:560px){.grid2{grid-template-columns:1fr}.ratebox{grid-template-columns:1fr 1fr}header{padding-top:18px}}
+.news-list{display:grid;gap:10px;margin-top:12px}.news-item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}.news-item h3{font-size:15px;line-height:1.6;margin:0 0 7px}.news-item p{font-size:13px;line-height:1.7;color:var(--muted);margin:0 0 8px}.news-meta{font-size:11px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap;margin-bottom:7px}.news-item a{color:var(--blue2);font-weight:700;text-decoration:none}.news-item a:hover{text-decoration:underline}#newsTabs{margin:12px 0;flex-wrap:nowrap}#newsTabs button{font-size:12px;padding:9px 11px}
 @media print{header,.tabs,.no-print,footer{display:none!important}body{background:white}main{max-width:none;padding:0}.panel{display:none!important}#products.panel{display:block!important}.card{border:0;box-shadow:none;padding:0}.tablewrap{overflow:visible}table{min-width:0;font-size:10px}th,td{padding:5px}}
 </style>
 </head>
@@ -71,6 +72,7 @@ td .actions{display:flex;gap:5px}td button{padding:7px 9px;font-size:12px}
     <button data-tab="convert">محول العملات</button>
     <button data-tab="backup">النسخ والتصدير</button>
     <button data-tab="prayer">أوقات الصلاة</button>
+    <button data-tab="news">الأخبار</button>
   </div>
 
   <section id="products" class="panel active">
@@ -185,6 +187,23 @@ td .actions{display:flex;gap:5px}td button{padding:7px 9px;font-size:12px}
     </div>
   </section>
 
+  <section id="news" class="panel">
+    <div class="card">
+      <div class="row"><h2>الأخبار المختصرة</h2><button class="secondary" id="refreshNews" type="button">تحديث الأخبار</button></div>
+      <p class="hint">أخبار عربية مختصرة من موجز Google News للأخبار المنشورة في مصادر صحفية. افتح رابط الخبر لقراءة التفاصيل من الموقع الأصلي. يلزم الاتصال بالإنترنت.</p>
+      <div class="tabs" id="newsTabs" role="tablist" aria-label="أقسام الأخبار">
+        <button class="active" data-news="syria" type="button">🇸🇾 سوريا</button>
+        <button data-news="arab" type="button">🌍 الوطن العربي</button>
+        <button data-news="world" type="button">🌐 العالم</button>
+        <button data-news="tech" type="button">💻 التكنولوجيا</button>
+        <button data-news="sports" type="button">⚽ الرياضة</button>
+      </div>
+      <div id="newsStatus" class="result" aria-live="polite">اضغط «تحديث الأخبار» لجلب أحدث العناوين.</div>
+      <div id="newsList" class="news-list"></div>
+      <p class="hint">الموجز يجمع عناوين من مصادر متعددة ولا يمثل جهة إخبارية مستقلة. تحقق من الخبر عبر المصدر الأصلي، وقد تختلف التغطية حسب توفر الخلاصات.</p>
+    </div>
+  </section>
+
   <section id="backup" class="panel">
     <div class="card">
       <h2>النسخ الاحتياطي والتصدير والمشاركة</h2>
@@ -267,6 +286,21 @@ function renderMetals(data,fromCache=false){
 async function refreshMetals(){const status=$('metalsStatus');if(!navigator.onLine){const cached=localStorage.getItem('daftar_metals_cache');if(cached){try{renderMetals(JSON.parse(cached),true);return}catch{}}status.textContent='لا يوجد اتصال بالإنترنت ولا توجد أسعار محفوظة.';return}
  status.textContent='جارٍ جلب أسعار الذهب والفضة…';try{const [g,s]=await Promise.all([fetch('https://api.gold-api.com/price/XAU',{cache:'no-store'}),fetch('https://api.gold-api.com/price/XAG',{cache:'no-store'})]);if(!g.ok||!s.ok)throw new Error('تعذر الاتصال بمصدر الأسعار');const [gold,silver]=await Promise.all([g.json(),s.json()]);const data={gold,silver};renderMetals(data);localStorage.setItem('daftar_metals_cache',JSON.stringify(data));}catch(e){const cached=localStorage.getItem('daftar_metals_cache');if(cached){try{renderMetals(JSON.parse(cached),true);status.textContent+=' — تعذر جلب سعر جديد؛ المعروض آخر سعر محفوظ.';return}catch{}}status.textContent='تعذر جلب أسعار الذهب والفضة الآن. حاول مجدداً لاحقاً.'}}
 $('refreshMetals').onclick=refreshMetals;
+const NEWS_FEEDS={
+ syria:'سوريا (site:sana.sy OR site:enabbaladi.net OR site:almodon.com OR site:alaraby.co.uk) when:2d',
+ arab:'أخبار الوطن العربي (site:aljazeera.net OR site:alarabiya.net OR site:skynewsarabia.com OR site:asharq.com) when:2d',
+ world:'أخبار العالم (site:bbc.com/arabic OR site:reuters.com OR site:dw.com OR site:france24.com/ar) when:2d',
+ tech:'أخبار التكنولوجيا والذكاء الاصطناعي (site:techcrunch.com OR site:theverge.com OR site:technologyreview.com OR site:bbc.com/arabic) when:2d',
+ sports:'أخبار الرياضة وكرة القدم (site:beinsports.com OR site:fifa.com OR site:uefa.com OR site:kooora.com) when:2d'
+};
+let activeNews='syria';
+function newsFeedUrl(key){const q=NEWS_FEEDS[key];const rss='https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=ar&gl=SA&ceid=SA:ar';return 'https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(rss)}
+function cleanNewsText(value){const d=document.createElement('div');d.innerHTML=String(value||'');return (d.textContent||d.innerText||'').replace(/\s+/g,' ').trim().slice(0,360)}
+function renderNews(items){const list=$('newsList');if(!items?.length){list.innerHTML='<div class="news-item">لا توجد أخبار متاحة حالياً لهذا القسم.</div>';return}list.innerHTML=items.slice(0,18).map(item=>{const title=cleanNewsText(item.title)||'خبر';const desc=cleanNewsText(item.description||item.content);const source=cleanNewsText(item.author||'مصدر الخبر');const date=item.pubDate?new Date(item.pubDate).toLocaleString('ar',{dateStyle:'medium',timeStyle:'short'}):'';const url=/^https?:\/\//i.test(item.link||'')?item.link:'#';return `<article class="news-item"><div class="news-meta"><span>${esc(source)}</span>${date?'<span>• '+esc(date)+'</span>':''}</div><h3>${esc(title)}</h3>${desc?'<p>'+esc(desc)+'</p>':''}<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">قراءة الخبر من المصدر ↗</a></article>`}).join('')}
+async function refreshNews(){const status=$('newsStatus'),key=activeNews;status.textContent='جارٍ جلب الأخبار…';$('newsList').innerHTML='';try{if(!navigator.onLine)throw Error('لا يوجد اتصال بالإنترنت');const response=await fetch(newsFeedUrl(key),{cache:'no-store'});if(!response.ok)throw Error('تعذر الاتصال بخدمة الأخبار');const data=await response.json();if(data.status!=='ok'||!Array.isArray(data.items))throw Error('لم تصل أخبار صالحة حالياً');const items=data.items.map(x=>({...x,author:x.author||x.source||'مصدر إخباري'}));localStorage.setItem('daftar_news_'+key,JSON.stringify({items,updatedAt:new Date().toISOString()}));renderNews(items);status.textContent='آخر تحديث: '+new Date().toLocaleString('ar')+' — '+items.length+' عنواناً';}catch(e){const cached=localStorage.getItem('daftar_news_'+key);if(cached){try{const old=JSON.parse(cached);renderNews(old.items||[]);status.textContent='تعذر جلب أخبار جديدة. هذه آخر عناوين محفوظة بتاريخ '+new Date(old.updatedAt).toLocaleString('ar');return}catch{}}status.textContent=(e.message||'تعذر جلب الأخبار')+'. حاول مجدداً عند توفر الإنترنت.'}}
+document.querySelectorAll('[data-news]').forEach(b=>b.onclick=()=>{activeNews=b.dataset.news;document.querySelectorAll('[data-news]').forEach(x=>x.classList.toggle('active',x===b));refreshNews()});
+$('refreshNews').onclick=refreshNews;
+
 function calculateExpression(){const e=$('calcExpr').value.replace(/\s/g,'');if(!e){$('calcResult').textContent='0';return}if(!/^[0-9+\-*/().%]+$/.test(e)){$('calcResult').textContent='صيغة غير صالحة';return}try{const v=Function('"use strict";return ('+e.replace(/(\d+(?:\.\d+)?)%/g,'($1/100)')+')')();$('calcResult').textContent=Number.isFinite(v)?fmt(v):'تعذر الحساب'}catch{$('calcResult').textContent='تعذر الحساب'}}
 document.querySelectorAll('[data-value]').forEach(b=>b.onclick=()=>{$('calcExpr').value+=b.dataset.value;calculateExpression()});
 document.querySelectorAll('[data-calc]').forEach(b=>b.onclick=()=>{if(b.dataset.calc==='clear'){$('calcExpr').value='';$('calcResult').textContent='0'}else if(b.dataset.calc==='back'){$('calcExpr').value=$('calcExpr').value.slice(0,-1);calculateExpression()}else if(b.dataset.calc==='sqrt'){const v=Number($('calcResult').textContent.replace(/,/g,''));$('calcExpr').value=String(Math.sqrt(v));calculateExpression()}else if(b.dataset.calc==='square'){$('calcExpr').value='('+ $('calcExpr').value +')*('+ $('calcExpr').value +')';calculateExpression()}else calculateExpression()});
@@ -277,7 +311,7 @@ function listText(){return ['قائمة الأسعار — '+new Date().toLocale
 $('shareList').onclick=async()=>{const text=listText();if(navigator.share){try{await navigator.share({title:'تطبيق الأسعار السورية شرف',text})}catch(e){}}else{await navigator.clipboard.writeText(text);$('backupMsg').textContent='تم نسخ القائمة. يمكنك لصقها في أي تطبيق.'}};
 $('whatsappList').onclick=()=>{const text=listText();window.open('https://wa.me/?text='+encodeURIComponent(text),'_blank','noopener')};
 $('downloadCsv').onclick=()=>{const rows=[['القسم','اسم المادة','فاتورة الشراء الأصلية ل.س','سعر الصرف وقت الشراء','تكلفة الشراء الحالية ل.س','قيمة الشراء الحالية دولار','نسبة الربح','قيمة الربح ل.س','مبيع ل.س','مبيع دولار','جملة الطرد ل.س','جملة الطرد دولار','كمية الطرد','ملاحظات'],...products.map(p=>[p.category||'عام',p.name,p.invoicePurchaseSyp,p.purchaseRateAtEntry,p.purchaseSyp,rate()>0?p.purchaseSyp/rate():0,p.profitPercent,Number(p.retailSyp||0)-Number(p.purchaseSyp||0),p.retailSyp,p.retailUsd,p.wholesaleSyp,p.wholesaleUsd,p.packQty,p.notes])];const csv='\uFEFF'+rows.map(r=>r.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(',')).join('\n');download('prices.csv',csv,'text/csv;charset=utf-8')};
-$('exportJson').onclick=()=>download('sharaf-prices-backup.json',JSON.stringify({app:'Sharaf Syrian Prices',version:14,createdAt:new Date().toISOString(),products,settings,history:getHistory()},null,2),'application/json');
+$('exportJson').onclick=()=>download('sharaf-prices-backup.json',JSON.stringify({app:'Sharaf Syrian Prices',version:15,createdAt:new Date().toISOString(),products,settings,history:getHistory()},null,2),'application/json');
 $('downloadPdf').onclick=()=>{document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id==='products'));window.print()};
 $('exportHistory').onclick=()=>{const h=getHistory(),rows=[['التاريخ','المادة','التغيير','السعر السابق','السعر الجديد'],...h.map(x=>[new Date(x.date).toLocaleString('ar'),x.name,x.label,x.before,x.after])];const csv='\uFEFF'+rows.map(r=>r.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(',')).join('\n');download('sharaf-price-history.csv',csv,'text/csv;charset=utf-8')};
 $('clearHistory').onclick=()=>{if(confirm('مسح سجل تغييرات الأسعار فقط؟ لن تتأثر المواد والأسعار الحالية.')){putHistory([]);renderHistory()}};
