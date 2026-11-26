@@ -73,6 +73,8 @@ td .actions{display:flex;gap:5px}td button{padding:7px 9px;font-size:12px}
     <button data-tab="backup">النسخ والتصدير</button>
     <button data-tab="prayer">أوقات الصلاة</button>
     <button data-tab="news">الأخبار</button>
+    <button data-tab="matches">المباريات اليومية</button>
+    <button data-tab="wisdom">التقويم والحكمة</button>
   </div>
 
   <section id="products" class="panel active">
@@ -204,6 +206,46 @@ td .actions{display:flex;gap:5px}td button{padding:7px 9px;font-size:12px}
     </div>
   </section>
 
+  <section id="matches" class="panel">
+    <div class="card">
+      <div class="row"><h2>المباريات اليومية</h2><button class="secondary" id="refreshMatches" type="button">تحديث المباريات</button></div>
+      <p class="hint">مواعيد المباريات حسب توقيت سوريا (Asia/Damascus). تظهر حالة المباراة والنتيجة أثناء اللعب، مع تحديث تلقائي كل دقيقة عند فتح هذا التبويب.</p>
+      <div class="section-tools" id="matchFilters">
+        <button class="active" data-league="all" type="button">كل البطولات</button>
+        <button data-league="eng.1" type="button">الدوري الإنجليزي</button>
+        <button data-league="esp.1" type="button">الدوري الإسباني</button>
+        <button data-league="esp.copa_del_rey" type="button">كأس ملك إسبانيا</button>
+        <button data-league="ger.1" type="button">الدوري الألماني</button>
+        <button data-league="ita.1" type="button">الدوري الإيطالي</button>
+        <button data-league="fra.1" type="button">الدوري الفرنسي</button>
+        <button data-league="uefa.champions" type="button">دوري أبطال أوروبا</button>
+        <button data-league="uefa.nations" type="button">دوري الأمم الأوروبية</button>
+      </div>
+      <div class="row"><div><label for="matchDate">التاريخ</label><input id="matchDate" type="date"></div></div>
+      <div class="result" id="matchStatus" aria-live="polite">اضغط «تحديث المباريات» لعرض مباريات اليوم بتوقيت سوريا.</div>
+      <div id="matchList" class="news-list"></div>
+      <p class="hint">مصدر بيانات المباريات والنتائج: ESPN. يتم تحويل مواعيد الانطلاق إلى توقيت سوريا (دمشق)، وتُحدّث حالة المباريات كل دقيقة أثناء فتح هذا التبويب. قد تختلف تغطية بعض المسابقات حسب ما يتيحه المصدر.</p>
+    </div>
+  </section>
+
+  <section id="wisdom" class="panel">
+    <div class="card">
+      <div class="row"><h2>التقويم الميلادي والهجري</h2><button class="secondary" id="refreshCalendar" type="button">تحديث التاريخ</button></div>
+      <div class="grid2">
+        <div class="rate"><small>التاريخ الميلادي</small><strong id="gregorianDate">—</strong></div>
+        <div class="rate"><small>التاريخ الهجري</small><strong id="hijriDate">—</strong></div>
+      </div>
+      <p class="hint">يعرض التاريخ الهجري وفق تقويم أم القرى. قد يختلف يوم واحد عن التقويم المعتمد رسمياً في سوريا بحسب رؤية الهلال.</p>
+    </div>
+    <div class="card">
+      <div class="row"><h2>مقولة وفكرة اليوم</h2><button class="secondary" id="nextWisdom" type="button">مقولة أخرى</button></div>
+      <div class="news-item"><div class="news-meta"><span id="wisdomCategory">—</span><span>تتجدد عند فتح التطبيق</span></div><h3 id="wisdomText">—</h3><p id="wisdomAuthor" class="hint">—</p></div>
+      <div class="row" style="margin-top:12px"><h2>معلومة عامة</h2><button class="secondary" id="nextFact" type="button">معلومة أخرى</button></div>
+      <div class="result" id="generalFact" aria-live="polite">—</div>
+      <p class="hint">تضم المختارات أفكاراً ومقولات من التراث الديني والفكر والأدب والسياسة والاقتصاد، إلى جانب معلومات عامة قصيرة. تُذكر النسبة للمؤلف عندما تكون معروفة، وتُعرض بعض الأفكار بصياغة موجزة لا باعتبارها اقتباساً حرفياً.</p>
+    </div>
+  </section>
+
   <section id="backup" class="panel">
     <div class="card">
       <h2>النسخ الاحتياطي والتصدير والمشاركة</h2>
@@ -287,19 +329,61 @@ async function refreshMetals(){const status=$('metalsStatus');if(!navigator.onLi
  status.textContent='جارٍ جلب أسعار الذهب والفضة…';try{const [g,s]=await Promise.all([fetch('https://api.gold-api.com/price/XAU',{cache:'no-store'}),fetch('https://api.gold-api.com/price/XAG',{cache:'no-store'})]);if(!g.ok||!s.ok)throw new Error('تعذر الاتصال بمصدر الأسعار');const [gold,silver]=await Promise.all([g.json(),s.json()]);const data={gold,silver};renderMetals(data);localStorage.setItem('daftar_metals_cache',JSON.stringify(data));}catch(e){const cached=localStorage.getItem('daftar_metals_cache');if(cached){try{renderMetals(JSON.parse(cached),true);status.textContent+=' — تعذر جلب سعر جديد؛ المعروض آخر سعر محفوظ.';return}catch{}}status.textContent='تعذر جلب أسعار الذهب والفضة الآن. حاول مجدداً لاحقاً.'}}
 $('refreshMetals').onclick=refreshMetals;
 const NEWS_FEEDS={
- syria:'سوريا (site:sana.sy OR site:enabbaladi.net OR site:almodon.com OR site:alaraby.co.uk) when:2d',
- arab:'أخبار الوطن العربي (site:aljazeera.net OR site:alarabiya.net OR site:skynewsarabia.com OR site:asharq.com) when:2d',
- world:'أخبار العالم (site:bbc.com/arabic OR site:reuters.com OR site:dw.com OR site:france24.com/ar) when:2d',
- tech:'أخبار التكنولوجيا والذكاء الاصطناعي (site:techcrunch.com OR site:theverge.com OR site:technologyreview.com OR site:bbc.com/arabic) when:2d',
- sports:'أخبار الرياضة وكرة القدم (site:beinsports.com OR site:fifa.com OR site:uefa.com OR site:kooora.com) when:2d'
+ syria:'(سوريا OR دمشق OR حلب OR حمص) (site:sana.sy OR site:enabbaladi.net OR site:almodon.com OR site:alaraby.co.uk) when:2d',
+ arab:'(أخبار الوطن العربي OR الشرق الأوسط) (site:aljazeera.net OR site:alarabiya.net OR site:skynewsarabia.com OR site:asharq.com) when:2d',
+ world:'(أخبار العالم) (site:bbc.com/arabic OR site:reuters.com OR site:dw.com OR site:france24.com/ar) when:2d',
+ tech:'(التكنولوجيا OR الذكاء الاصطناعي) (site:techcrunch.com OR site:theverge.com OR site:technologyreview.com OR site:bbc.com/arabic) when:2d',
+ sports:'(أخبار الرياضة OR كرة القدم) (site:beinsports.com OR site:fifa.com OR site:uefa.com OR site:kooora.com) when:2d'
 };
 let activeNews='syria';
-function newsFeedUrl(key){const q=NEWS_FEEDS[key];const rss='https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=ar&gl=SA&ceid=SA:ar';return 'https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(rss)}
+function newsRssUrl(key){const q=NEWS_FEEDS[key];return 'https://news.google.com/rss/search?q='+encodeURIComponent(q)+'&hl=ar&gl=SA&ceid=SA:ar'}
 function cleanNewsText(value){const d=document.createElement('div');d.innerHTML=String(value||'');return (d.textContent||d.innerText||'').replace(/\s+/g,' ').trim().slice(0,360)}
+function parseNewsXml(xml){const doc=new DOMParser().parseFromString(xml,'text/xml');if(doc.querySelector('parsererror'))throw Error('صيغة موجز الأخبار غير صالحة');return [...doc.querySelectorAll('item')].map(n=>({title:n.querySelector('title')?.textContent||'',link:n.querySelector('link')?.textContent||'',description:n.querySelector('description')?.textContent||'',pubDate:n.querySelector('pubDate')?.textContent||'',author:n.querySelector('source')?.textContent||'مصدر إخباري'})).filter(x=>x.title&&x.link)}
+async function fetchNewsItems(key){
+ const queries=[newsRssUrl(key),newsRssUrl(key).replace('when:2d','when:7d')];
+ const proxies=[
+  u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),
+  u=>'https://corsproxy.io/?url='+encodeURIComponent(u)
+ ];
+ let lastError=null;
+ for(const rss of queries){
+  const encoded=encodeURIComponent(rss);
+  for(const proxy of proxies){
+   try{const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);let response;try{response=await fetch(proxy(rss),{cache:'no-store',signal:controller.signal})}finally{clearTimeout(timer)}if(!response.ok)throw Error('تعذر الاتصال بخدمة موجز الأخبار');const items=parseNewsXml(await response.text());if(items.length)return items}catch(e){lastError=e}
+  }
+  try{const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);let response;try{response=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encoded,{cache:'no-store',signal:controller.signal})}finally{clearTimeout(timer)}if(!response.ok)throw Error('RSS2JSON HTTP '+response.status);const j=await response.json();if(j.status==='ok'&&Array.isArray(j.items)&&j.items.length)return j.items.map(x=>({...x,author:x.author||x.source||'مصدر إخباري'}));throw Error('لم يعُد محول الأخبار عناوين صالحة')}catch(e){lastError=e}
+ }
+ throw lastError||Error('لم تصل أخبار من المصادر');
+}
 function renderNews(items){const list=$('newsList');if(!items?.length){list.innerHTML='<div class="news-item">لا توجد أخبار متاحة حالياً لهذا القسم.</div>';return}list.innerHTML=items.slice(0,18).map(item=>{const title=cleanNewsText(item.title)||'خبر';const desc=cleanNewsText(item.description||item.content);const source=cleanNewsText(item.author||'مصدر الخبر');const date=item.pubDate?new Date(item.pubDate).toLocaleString('ar',{dateStyle:'medium',timeStyle:'short'}):'';const url=/^https?:\/\//i.test(item.link||'')?item.link:'#';return `<article class="news-item"><div class="news-meta"><span>${esc(source)}</span>${date?'<span>• '+esc(date)+'</span>':''}</div><h3>${esc(title)}</h3>${desc?'<p>'+esc(desc)+'</p>':''}<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">قراءة الخبر من المصدر ↗</a></article>`}).join('')}
-async function refreshNews(){const status=$('newsStatus'),key=activeNews;status.textContent='جارٍ جلب الأخبار…';$('newsList').innerHTML='';try{if(!navigator.onLine)throw Error('لا يوجد اتصال بالإنترنت');const response=await fetch(newsFeedUrl(key),{cache:'no-store'});if(!response.ok)throw Error('تعذر الاتصال بخدمة الأخبار');const data=await response.json();if(data.status!=='ok'||!Array.isArray(data.items))throw Error('لم تصل أخبار صالحة حالياً');const items=data.items.map(x=>({...x,author:x.author||x.source||'مصدر إخباري'}));localStorage.setItem('daftar_news_'+key,JSON.stringify({items,updatedAt:new Date().toISOString()}));renderNews(items);status.textContent='آخر تحديث: '+new Date().toLocaleString('ar')+' — '+items.length+' عنواناً';}catch(e){const cached=localStorage.getItem('daftar_news_'+key);if(cached){try{const old=JSON.parse(cached);renderNews(old.items||[]);status.textContent='تعذر جلب أخبار جديدة. هذه آخر عناوين محفوظة بتاريخ '+new Date(old.updatedAt).toLocaleString('ar');return}catch{}}status.textContent=(e.message||'تعذر جلب الأخبار')+'. حاول مجدداً عند توفر الإنترنت.'}}
+async function refreshNews(){const status=$('newsStatus'),key=activeNews;status.textContent='جارٍ جلب الأخبار من المصادر…';$('newsList').innerHTML='';try{if(!navigator.onLine)throw Error('لا يوجد اتصال بالإنترنت');const items=await fetchNewsItems(key);localStorage.setItem('daftar_news_'+key,JSON.stringify({items,updatedAt:new Date().toISOString()}));renderNews(items);status.textContent='تم التحديث: '+new Date().toLocaleString('ar')+' — '+items.length+' عنواناً'}catch(e){const cached=localStorage.getItem('daftar_news_'+key);if(cached){try{const old=JSON.parse(cached);renderNews(old.items||[]);status.textContent='تعذر الاتصال بالمصادر الآن. هذه آخر عناوين محفوظة بتاريخ '+new Date(old.updatedAt).toLocaleString('ar');return}catch{}}status.textContent='تعذر جلب الأخبار من المصادر البديلة. تحقق من الاتصال وحاول لاحقاً.'}}
 document.querySelectorAll('[data-news]').forEach(b=>b.onclick=()=>{activeNews=b.dataset.news;document.querySelectorAll('[data-news]').forEach(x=>x.classList.toggle('active',x===b));refreshNews()});
 $('refreshNews').onclick=refreshNews;
+
+// Daily football fixtures from ESPN. All dates and kickoff times are Syria local time.
+const MATCH_LEAGUES=[
+ {id:'eng.1',name:'الدوري الإنجليزي الممتاز'},
+ {id:'esp.1',name:'الدوري الإسباني'},
+ {id:'esp.copa_del_rey',name:'كأس ملك إسبانيا'},
+ {id:'ger.1',name:'الدوري الألماني'},
+ {id:'ita.1',name:'الدوري الإيطالي'},
+ {id:'fra.1',name:'الدوري الفرنسي'},
+ {id:'uefa.champions',name:'دوري أبطال أوروبا'},
+ {id:'uefa.nations',name:'دوري الأمم الأوروبية'}
+];
+let activeLeague='all',matchesRefreshTimer=null;
+function syriaDateInput(date=new Date()){const p=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Damascus',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(date),v=k=>p.find(x=>x.type===k)?.value;return `${v('year')}-${v('month')}-${v('day')}`}
+function syriaDateStamp(date){return date.replaceAll('-','')}
+function shiftIsoDate(date,days){const d=new Date(date+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+days);return d.toISOString().slice(0,10)}
+function fmtKickoff(date){return new Intl.DateTimeFormat('ar-SY',{timeZone:'Asia/Damascus',hour:'2-digit',minute:'2-digit',hour12:true}).format(new Date(date))}
+function fmtSyriaDate(date){return new Intl.DateTimeFormat('ar-SY',{timeZone:'Asia/Damascus',day:'numeric',month:'long'}).format(new Date(date))}
+function matchState(g){const t=g.status?.type||{},state=t.state;if(state==='in')return '🔴 مباشرة الآن'+(g.status?.displayClock?' — '+g.status.displayClock:'');if(state==='post')return 'انتهت المباراة'+(t.shortDetail&& !/^(Final|FT)$/i.test(t.shortDetail)?' — '+t.shortDetail:'');if(t.name?.includes('POSTPONED')||t.description?.includes('Postponed'))return 'مؤجلة';if(t.name?.includes('CANCELED')||t.description?.includes('Canceled'))return 'أُلغيت';return 'لم تبدأ بعد'}
+function renderMatches(games){const list=$('matchList');if(!games.length){list.innerHTML='<div class="news-item">لا توجد مباريات مسجلة لهذه البطولة في التاريخ المحدد بتوقيت سوريا.</div>';return}list.innerHTML=games.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(g=>{const t=g.status?.type||{},state=matchState(g),live=t.state==='in',hasScore=g.homeScore!==null&&g.homeScore!==undefined&&g.awayScore!==null&&g.awayScore!==undefined,score=hasScore?`<b>${esc(g.homeScore)} - ${esc(g.awayScore)}</b>`:'<b>—</b>';return `<article class="news-item" style="${live?'border:2px solid #d92d20':''}"><div class="news-meta"><span>${esc(g.league)}</span><span>${esc(fmtSyriaDate(g.date))} • ${esc(fmtKickoff(g.date))} بتوقيت سوريا</span></div><div class="row" style="align-items:center"><strong>${esc(g.home)}</strong><span style="text-align:center;min-width:75px;font-size:18px">${score}</span><strong>${esc(g.away)}</strong></div><p style="margin:9px 0 0;font-weight:700;color:${live?'#d92d20':'var(--muted)'}">${esc(state)}</p>${g.venue?`<p>${esc(g.venue)}</p>`:''}</article>`}).join('')}
+async function fetchLeagueDay(league,date){const url=`https://site.api.espn.com/apis/site/v2/sports/soccer/${league.id}/scoreboard?dates=${syriaDateStamp(date)}`;const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),14000);try{const r=await fetch(url,{cache:'no-store',signal:controller.signal});if(!r.ok)throw Error(league.id+' HTTP '+r.status);const j=await r.json();return (j.events||[]).map(e=>{const c=e.competitions?.[0]||{},home=c.competitors?.find(t=>t.homeAway==='home'),away=c.competitors?.find(t=>t.homeAway==='away');return {id:e.id,league:league.name,date:e.date,home:home?.team?.displayName||'الفريق الأول',away:away?.team?.displayName||'الفريق الثاني',homeScore:home?.score??null,awayScore:away?.score??null,status:e.status,venue:c.venue?.fullName}})}finally{clearTimeout(timer)}}
+async function refreshMatches(){const status=$('matchStatus'),date=$('matchDate').value||syriaDateInput(),statusDate=date;status.textContent='جارٍ تحميل المباريات والنتائج…';$('matchList').innerHTML='';const leagues=activeLeague==='all'?MATCH_LEAGUES:MATCH_LEAGUES.filter(x=>x.id===activeLeague);try{if(!navigator.onLine)throw Error('لا يوجد اتصال بالإنترنت');const adjacent=[shiftIsoDate(date,-1),date,shiftIsoDate(date,1)];const results=await Promise.allSettled(leagues.flatMap(l=>adjacent.map(d=>fetchLeagueDay(l,d))));const games=results.filter(x=>x.status==='fulfilled').flatMap(x=>x.value);const unique=[...new Map(games.filter(g=>syriaDateInput(new Date(g.date))===statusDate).map(g=>[g.id||g.league+g.date+g.home+g.away,g])).values()];const failed=results.filter(x=>x.status==='rejected').length;if(!results.some(x=>x.status==='fulfilled'))throw Error('تعذر الاتصال بمصدر المباريات');localStorage.setItem('daftar_matches_'+date,JSON.stringify({games:unique,updatedAt:new Date().toISOString()}));renderMatches(unique);status.textContent='آخر تحديث: '+new Date().toLocaleString('ar',{timeZone:'Asia/Damascus'})+' بتوقيت سوريا — '+unique.length+' مباراة'+(failed?' — تعذر تحميل بعض البطولات':'')+(unique.length?'':' — لا توجد مباريات في هذا اليوم ضمن البطولات المختارة.')}catch(e){const cached=localStorage.getItem('daftar_matches_'+date);if(cached){try{const old=JSON.parse(cached),games=(old.games||[]).filter(g=>activeLeague==='all'||MATCH_LEAGUES.find(l=>l.id===activeLeague)?.name===g.league);renderMatches(games);status.textContent='تعذر جلب بيانات جديدة. المعروض آخر جدول محفوظ بتاريخ '+new Date(old.updatedAt).toLocaleString('ar',{timeZone:'Asia/Damascus'})+' بتوقيت سوريا؛ قد لا تعكس الحالة المباشرة الآن.';return}catch{}}status.textContent='تعذر تحميل المباريات حالياً. تحقق من الإنترنت وحاول مجدداً.'}}
+function startLiveMatchRefresh(){if(matchesRefreshTimer)clearInterval(matchesRefreshTimer);matchesRefreshTimer=setInterval(()=>{if($('matches')?.classList.contains('active'))refreshMatches()},60000)}
+document.querySelectorAll('[data-league]').forEach(b=>b.onclick=()=>{activeLeague=b.dataset.league;document.querySelectorAll('[data-league]').forEach(x=>x.classList.toggle('active',x===b));refreshMatches()});
+$('refreshMatches').onclick=refreshMatches;$('matchDate').value=syriaDateInput();$('matchDate').onchange=refreshMatches;startLiveMatchRefresh();
 
 function calculateExpression(){const e=$('calcExpr').value.replace(/\s/g,'');if(!e){$('calcResult').textContent='0';return}if(!/^[0-9+\-*/().%]+$/.test(e)){$('calcResult').textContent='صيغة غير صالحة';return}try{const v=Function('"use strict";return ('+e.replace(/(\d+(?:\.\d+)?)%/g,'($1/100)')+')')();$('calcResult').textContent=Number.isFinite(v)?fmt(v):'تعذر الحساب'}catch{$('calcResult').textContent='تعذر الحساب'}}
 document.querySelectorAll('[data-value]').forEach(b=>b.onclick=()=>{$('calcExpr').value+=b.dataset.value;calculateExpression()});
@@ -323,10 +407,52 @@ function applyTheme(theme){document.body.dataset.theme=theme;settings.theme=them
 $('themeToggle').onclick=()=>applyTheme(document.body.dataset.theme==='dark'?'light':'dark');
 async function refreshPrayerTimes(){const el=$('prayerStatus');if(!navigator.onLine){el.textContent='لا يوجد اتصال بالإنترنت؛ حاول التحديث عند الاتصال.';return}el.textContent='جارٍ جلب أوقات الصلاة لحمص…';try{const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Damascus',day:'2-digit',month:'2-digit',year:'numeric'}).formatToParts(new Date());const part=k=>parts.find(x=>x.type===k)?.value||'00';const date=[part('day'),part('month'),part('year')].join('-');const url='https://api.aladhan.com/v1/timingsByCity/'+date+'?city=Homs&country=Syria&method=3';const res=await fetch(url,{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const j=await res.json();if(j.code!==200||!j.data?.timings)throw Error('No timings');const t=j.data.timings;for(const [id,key] of [['prFajr','Fajr'],['prSunrise','Sunrise'],['prDhuhr','Dhuhr'],['prAsr','Asr'],['prMaghrib','Maghrib'],['prIsha','Isha']])$(id).textContent=(t[key]||'—').split(' ')[0];el.textContent='تم التحديث لمدينة حمص بتاريخ '+(j.data.date?.readable||date)+' — '+(j.data.meta?.method?.name||'طريقة الحساب 3');localStorage.setItem('daftar_prayer_cache',JSON.stringify({date,timings:t,readable:j.data.date?.readable||date}))}catch(e){const c=localStorage.getItem('daftar_prayer_cache');if(c){const x=JSON.parse(c);for(const [id,key] of [['prFajr','Fajr'],['prSunrise','Sunrise'],['prDhuhr','Dhuhr'],['prAsr','Asr'],['prMaghrib','Maghrib'],['prIsha','Isha']])$(id).textContent=(x.timings[key]||'—').split(' ')[0];el.textContent='تعذر التحديث الآن؛ المعروض آخر توقيت محفوظ بتاريخ '+x.readable}else el.textContent='تعذر جلب المواقيت. تحقق من الاتصال ثم حاول مجدداً.'}}
 $('refreshPrayer').onclick=refreshPrayerTimes;
+// التقويم الهجري ومحتوى معرفي متجدد عند كل تشغيل للتطبيق
+const WISDOM_ITEMS=[
+ {category:'حكمة دينية',text:'من حسن إسلام المرء تركه ما لا يعنيه.',author:'حديث نبوي شريف — رواه الترمذي وابن ماجه'},
+ {category:'علماء ومفكرون',text:'العلم في الصغر كالنقش على الحجر.',author:'حكمة عربية متداولة'},
+ {category:'فكر واجتماع',text:'الإنسان مدنيٌّ بالطبع، ولا تقوم حياته إلا بالتعاون.',author:'فكرة مستلهمة من ابن خلدون'},
+ {category:'سياسة وعمران',text:'الظلم مؤذن بخراب العمران.',author:'ابن خلدون — المقدمة'},
+ {category:'علماء الدين',text:'الدين النصيحة.',author:'حديث نبوي شريف — رواه مسلم'},
+ {category:'اقتصاد',text:'الادخار والاستثمار المنتج يساعدان على بناء الثروة على المدى الطويل.',author:'مبدأ اقتصادي عام، وليس اقتباساً حرفياً'},
+ {category:'أدب وشعر',text:'وإنما الأمم الأخلاق ما بقيت، فإن همُ ذهبت أخلاقهم ذهبوا.',author:'أحمد شوقي'},
+ {category:'اقتصاد',text:'تقسيم العمل والتخصص يرفعان الإنتاجية عندما تتسع الأسواق.',author:'فكرة من كتاب ثروة الأمم — آدم سميث'},
+ {category:'سياسة وفكر',text:'الغاية من الحكم الرشيد حماية الحقوق وخدمة الصالح العام.',author:'فكرة سياسية عامة مستلهمة من الفكر الدستوري'},
+ {category:'أدب عالمي',text:'ليس المهم أن تقرأ كثيراً، بل أن تفكر فيما تقرأ.',author:'حكمة متداولة في أدب القراءة'},
+ {category:'علماء الدين',text:'قيمة الإنسان فيما يحسنه ويتقنه وينفع به الناس.',author:'حكمة عربية في إتقان العمل'},
+ {category:'فلسفة',text:'الحياة التي لا يراجع فيها الإنسان أفكاره تفقد فرصة النمو.',author:'فكرة مستلهمة من سقراط'},
+ {category:'اقتصاد ومجتمع',text:'الثقة والاستقرار والشفافية عناصر أساسية لازدهار النشاط الاقتصادي.',author:'مبدأ عام في علم الاقتصاد المؤسسي'},
+ {category:'سياسة',text:'الحوار واحترام الاختلاف أساس بناء مجتمع متماسك.',author:'مقولة فكرية عامة'},
+ {category:'أدب عربي',text:'وما نيل المطالب بالتمني، ولكن تؤخذ الدنيا غلابا.',author:'أحمد شوقي'},
+ {category:'علم ومعرفة',text:'كلما اتسعت دائرة المعرفة أدرك الإنسان اتساع ما يجهله.',author:'حكمة فكرية متداولة'},
+ {category:'فكر ديني',text:'يسروا ولا تعسروا، وبشروا ولا تنفروا.',author:'حديث نبوي شريف — متفق عليه'},
+ {category:'كتّاب عالميون',text:'القراءة تمنحنا عوالم وتجارب تتجاوز حدود أعمارنا.',author:'فكرة عامة عن أثر الأدب والقراءة'}
+];
+const GENERAL_FACTS=[
+ 'يستغرق ضوء الشمس نحو 8 دقائق و20 ثانية للوصول إلى الأرض.',
+ 'يُعدّ البحر المتوسط بحراً شبه مغلق، ويتصل بالمحيط الأطلسي عبر مضيق جبل طارق.',
+ 'اللغة العربية من اللغات السامية، وتُكتب من اليمين إلى اليسار.',
+ 'يضم جسم الإنسان البالغ عادةً 206 عظمات، وقد يختلف العدد قليلاً بين الأفراد.',
+ 'الماء النقي يتجمد عند صفر مئوي ويغلي عند 100 مئوي تقريباً عند ضغط جوي واحد.',
+ 'تقع دمشق ضمن أقدم المدن المأهولة باستمرار في العالم، ولها تاريخ حضاري موغل في القدم.',
+ 'تتكون السنة الشمسية من نحو 365.2422 يوماً، ولذلك نستخدم السنوات الكبيسة لمواءمة التقويم.',
+ 'النحل يتواصل مع أفراد خليته بحركات تُعرف برقصة الاهتزاز لتحديد اتجاه الغذاء ومسافته.',
+ 'الأرض ليست كرة تامة؛ فهي مفلطحة قليلاً عند القطبين بسبب دورانها.',
+ 'القراءة المنتظمة توسّع المفردات وتدعم الذاكرة والتركيز على المدى الطويل.',
+ 'أكبر محيطات الأرض هو المحيط الهادئ، ويغطي مساحة أكبر من أي محيط آخر.',
+ 'الذهب عنصر كيميائي رمزه Au وعدده الذري 79.'
+];
+function randomDifferentIndex(length,key){const old=Number(localStorage.getItem(key));let n=Math.floor(Math.random()*length);if(length>1&&n===old)n=(n+1+Math.floor(Math.random()*(length-1)))%length;localStorage.setItem(key,String(n));return n}
+function showWisdom(){const x=WISDOM_ITEMS[randomDifferentIndex(WISDOM_ITEMS.length,'sharaf_wisdom_last')];$('wisdomCategory').textContent=x.category;$('wisdomText').textContent='«'+x.text+'»';$('wisdomAuthor').textContent=x.author}
+function showFact(){ $('generalFact').textContent=GENERAL_FACTS[randomDifferentIndex(GENERAL_FACTS.length,'sharaf_fact_last')] }
+function updateCalendar(){const now=new Date();$('gregorianDate').textContent=new Intl.DateTimeFormat('ar-SY',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'Asia/Damascus'}).format(now);try{$('hijriDate').textContent=new Intl.DateTimeFormat('ar-SY-u-ca-islamic-umalqura',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'Asia/Damascus'}).format(now)}catch(e){$('hijriDate').textContent=new Intl.DateTimeFormat('ar-SA-u-ca-islamic',{day:'numeric',month:'long',year:'numeric',timeZone:'Asia/Damascus'}).format(now)}}
+$('refreshCalendar').onclick=updateCalendar;$('nextWisdom').onclick=showWisdom;$('nextFact').onclick=showFact;
+updateCalendar();showWisdom();showFact();setInterval(updateCalendar,60000);
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));
 }
-document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab))});
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab));if(b.dataset.tab==='news')refreshNews();if(b.dataset.tab==='matches'){refreshMatches();startLiveMatchRefresh()}});
 $('printBtn').onclick=()=>window.print();
 (async()=>{try{db=await openDB();const saved=localStorage.getItem('daftar_settings');if(saved)settings={...settings,...JSON.parse(saved)};applyTheme(settings.theme||'light');updateRateUI();await load();await migrateUsdBase();if(rate()>0)await repriceProducts();updateRateUI();refreshRates();refreshMetals();refreshPrayerTimes();setInterval(()=>{if(document.visibilityState==='visible'){refreshRates();refreshMetals();refreshPrayerTimes()}},60*60*1000)}catch(e){alert('تعذر فتح قاعدة البيانات في هذا المتصفح. يرجى استخدام Chrome حديث.')}})();
 </script>
