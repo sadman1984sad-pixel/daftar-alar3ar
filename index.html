@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#173b32">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon-sharaf-192.png">
-<title>دفتر الأسعار السوري</title>
+<title>تطبيق الأسعار السورية شرف</title>
 <style>
 :root{--green:#173b32;--green2:#245b4b;--bg:#f4f6f4;--card:#fff;--ink:#18231f;--muted:#6c7771;--line:#e2e8e3;--red:#b42318}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif}
@@ -36,6 +36,14 @@ td .actions{display:flex;gap:5px}td button{padding:7px 9px;font-size:12px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .result{background:#edf4ef;padding:13px;border-radius:10px;margin-top:12px;font-weight:bold;color:var(--green)}
 .hidden{display:none!important}
+.calc-shell{max-width:390px;margin:8px auto;background:#17221d;border-radius:22px;padding:16px;box-shadow:0 8px 24px #10251a20}
+.calc-screen{background:#eaf1ec;color:#14251c;border-radius:12px;min-height:88px;padding:14px;text-align:left;direction:ltr;display:flex;flex-direction:column;justify-content:center;overflow:hidden;margin-bottom:13px}
+.calc-screen #calcExpr{border:0;background:transparent;padding:0;text-align:right;font-size:19px;color:#53635a;outline:none}
+.calc-screen #calcResult{font-size:30px;font-weight:700;text-align:right;direction:ltr;min-height:36px;overflow-wrap:anywhere}
+.calc-keys{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.calc-keys button{height:58px;border-radius:14px;font-size:21px;background:#31443a;color:#fff;box-shadow:inset 0 -2px #17251e}
+.calc-keys button.op{background:#567463}.calc-keys button.utility{background:#dce8df;color:#1b392b}.calc-keys button.equals{background:#c58b35;color:#fff}.calc-keys button.zero{grid-column:span 2}
+.calc-help{text-align:center;margin-top:10px}
 footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
 @media(max-width:560px){.grid2{grid-template-columns:1fr}.ratebox{grid-template-columns:1fr 1fr}header{padding-top:18px}}
 @media print{header,.tabs,.no-print,footer{display:none!important}body{background:white}main{max-width:none;padding:0}.panel{display:none!important}#products.panel{display:block!important}.card{border:0;box-shadow:none;padding:0}.tablewrap{overflow:visible}table{min-width:0;font-size:10px}th,td{padding:5px}}
@@ -43,8 +51,8 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
 </head>
 <body>
 <header>
-  <h1>دفتر الأسعار السوري</h1>
-  <p>إدارة المواد والأسعار بالجملة والمفرق</p>
+  <h1>تطبيق الأسعار السورية شرف</h1>
+  <p>إدارة أسعار المواد بالدولار والليرة السورية</p>
   <div class="ratebox">
     <div class="rate"><small>سعر الدولار المعتمد</small><strong id="activeRate">—</strong></div>
     <div class="rate"><small>مصدر السعر المختار</small><strong id="activeType">السوق الموازية</strong></div>
@@ -66,13 +74,11 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
       <div class="grid2">
         <div><label>اسم المادة *</label><input id="name" placeholder="مثال: سكر"></div>
         <div><label>الملاحظات</label><input id="notes" placeholder="مثال: نوع ممتاز / كيلو"></div>
-        <div><label>سعر المفرق للقطعة (ل.س قديمة)</label><input id="retailSyp" type="number" min="0" step="any" placeholder="0"></div>
-        <div><label>سعر المفرق للقطعة ($)</label><input id="retailUsd" type="number" min="0" step="any" placeholder="0"></div>
-        <div><label>سعر الجملة للطرد (ل.س قديمة)</label><input id="wholesaleSyp" type="number" min="0" step="any" placeholder="0"></div>
-        <div><label>سعر الجملة للطرد ($)</label><input id="wholesaleUsd" type="number" min="0" step="any" placeholder="0"></div>
+        <div><label>سعر المفرق للقطعة بالدولار ($)</label><input id="retailUsd" type="number" min="0" step="0.01" placeholder="مثال: 0.70"><small class="hint" id="retailSypPreview">السعر بالليرة يُحسب تلقائياً</small></div>
+        <div><label>سعر الجملة للطرد بالدولار ($)</label><input id="wholesaleUsd" type="number" min="0" step="0.01" placeholder="مثال: 8.40"><small class="hint" id="wholesaleSypPreview">السعر بالليرة يُحسب تلقائياً</small></div>
         <div><label>عدد القطع في الطرد</label><input id="packQty" type="number" min="0" step="1" placeholder="مثال: 12"></div>
       </div>
-      <p class="hint">عند إدخال سعر بعملة واحدة، يحسب التطبيق السعر المقابل وفق سعر الصرف الحالي. ويمكنك إدخال العملتين يدوياً إذا رغبت.</p>
+      <p class="hint">أدخل الأسعار بالدولار فقط. يحسب التطبيق أسعار الليرة السورية القديمة تلقائياً، ويعيد حساب جميع المواد عند تغيير سعر الصرف.</p>
       <button id="saveProduct">حفظ المادة</button>
       <span id="formMsg" class="hint"></span>
     </div>
@@ -111,10 +117,17 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
   <section id="calc" class="panel">
     <div class="card">
       <h2>الحاسبة</h2>
-      <label>العملية الحسابية</label><input id="calcExpr" inputmode="decimal" placeholder="مثال: 12500*3+2000">
-      <button id="calculate">احسب</button>
-      <div class="result" id="calcResult">النتيجة ستظهر هنا</div>
-      <p class="hint">يدعم الجمع والطرح والضرب والقسمة والأقواس والنسب المئوية عبر العمليات الحسابية.</p>
+      <div class="calc-shell">
+        <div class="calc-screen"><input id="calcExpr" inputmode="decimal" placeholder="0" aria-label="العملية الحسابية"><div id="calcResult">0</div></div>
+        <div class="calc-keys">
+          <button class="utility" data-calc="clear">AC</button><button class="utility" data-calc="back">⌫</button><button class="utility" data-value="%">%</button><button class="op" data-value="/">÷</button>
+          <button data-value="7">7</button><button data-value="8">8</button><button data-value="9">9</button><button class="op" data-value="*">×</button>
+          <button data-value="4">4</button><button data-value="5">5</button><button data-value="6">6</button><button class="op" data-value="-">−</button>
+          <button data-value="1">1</button><button data-value="2">2</button><button data-value="3">3</button><button class="op" data-value="+">+</button>
+          <button class="zero" data-value="0">0</button><button data-value=".">.</button><button class="equals" data-calc="equals">=</button>
+        </div>
+      </div>
+      <p class="hint calc-help">حاسبة بأزرار تقليدية للجمع والطرح والضرب والقسمة والنسب المئوية.</p>
     </div>
   </section>
 
@@ -145,7 +158,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
     </div>
   </section>
 </main>
-<footer>دفتر الأسعار السوري — تحفظ البيانات محلياً على هذا الجهاز</footer>
+<footer>تطبيق الأسعار السورية شرف — تحفظ البيانات محلياً على هذا الجهاز</footer>
 <script>
 const DB_NAME='DaftarAlAsaarDB', STORE='products';
 let db, products=[], settings={rateType:'parallel',parallelRate:0,officialRate:0,lastRateUpdate:null,rateSource:'manual'};
@@ -155,7 +168,19 @@ const $=id=>document.getElementById(id);
 const num=id=>{const v=parseFloat($(id).value);return Number.isFinite(v)?v:0};
 const fmt=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:2});
 function rate(){return settings.rateType==='official'?Number(settings.officialRate):Number(settings.parallelRate)}
-function repriceProducts(){const r=rate();if(!(r>0))return;products=products.map(p=>({...p,retailSyp:Number(p.retailUsd)>0?Number(p.retailUsd)*r:Number(p.retailSyp||0),wholesaleSyp:Number(p.wholesaleUsd)>0?Number(p.wholesaleUsd)*r:Number(p.wholesaleSyp||0)}));return tx('readwrite',(s,res)=>{const clear=s.clear();clear.onsuccess=()=>{if(!products.length){res();return}let left=products.length;products.forEach(p=>{const q=s.put(p);q.onsuccess=()=>{if(!--left)res()};q.onerror=()=>res()})}}).then(()=>render())}
+async function migrateUsdBase(){
+  if(localStorage.getItem('daftar_usd_base_migrated')==='1'||!(rate()>0))return;
+  products=products.map(p=>({...p,
+    retailUsd:(Number(p.retailUsd)>0?Number(p.retailUsd):(Number(p.retailSyp)>0?Number(p.retailSyp)/rate():0)),
+    wholesaleUsd:(Number(p.wholesaleUsd)>0?Number(p.wholesaleUsd):(Number(p.wholesaleSyp)>0?Number(p.wholesaleSyp)/rate():0))
+  }));
+  await persistAllProducts();
+  localStorage.setItem('daftar_usd_base_migrated','1');
+}
+function persistAllProducts(){return tx('readwrite',(s,res)=>{const clear=s.clear();clear.onsuccess=()=>{if(!products.length){res();return}let left=products.length;products.forEach(p=>{const q=s.put(p);q.onsuccess=()=>{if(!--left)res()};q.onerror=()=>res()})}})}
+async function repriceProducts(){await migrateUsdBase();const r=rate();if(!(r>0))return;products=products.map(p=>({...p,retailSyp:Number(p.retailUsd||0)*r,wholesaleSyp:Number(p.wholesaleUsd||0)*r}));await persistAllProducts();render();updatePricePreviews()}
+function updatePricePreviews(){const r=rate();$('retailSypPreview').textContent='بالليرة السورية القديمة: '+(r>0?fmt(num('retailUsd')*r):'أدخل سعر الصرف أولاً');$('wholesaleSypPreview').textContent='بالليرة السورية القديمة: '+(r>0?fmt(num('wholesaleUsd')*r):'أدخل سعر الصرف أولاً')}
+
 function activeType(){return settings.rateType==='official'?'السعر الرسمي':'السوق الموازية'}
 function openDB(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,1);req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE,{keyPath:'id',autoIncrement:true})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
 function tx(mode,fn){return new Promise((resolve,reject)=>{const t=db.transaction(STORE,mode),s=t.objectStore(STORE);fn(s,resolve,reject);t.onerror=()=>reject(t.error)})}
@@ -164,25 +189,28 @@ async function saveProduct(p){await tx('readwrite',(s,res)=>{const r=p.id?s.put(
 async function deleteProduct(id){await tx('readwrite',(s,res)=>{const r=s.delete(id);r.onsuccess=()=>res()});await load()}
 function render(){const q=$('search').value.trim().toLowerCase();const list=products.filter(p=>(p.name||'').toLowerCase().includes(q));$('count').textContent=list.length+' مادة';$('productRows').innerHTML=list.length?list.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${fmt(p.retailSyp)}</td><td>${fmt(p.retailUsd)}</td><td>${fmt(p.wholesaleSyp)}</td><td>${fmt(p.wholesaleUsd)}</td><td>${fmt(p.packQty)}</td><td>${p.packQty>0?fmt(p.wholesaleSyp/p.packQty):'—'}</td><td>${esc(p.notes||'')}</td><td class="no-print"><div class="actions"><button class="secondary" onclick="editProduct(${p.id})">تعديل</button><button class="danger" onclick="removeProduct(${p.id})">حذف</button></div></td></tr>`).join(''):'<tr><td colspan="9">لا توجد نتائج.</td></tr>'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-window.editProduct=id=>{const p=products.find(x=>x.id===id);if(!p)return;$('editId').value=p.id;$('name').value=p.name;$('notes').value=p.notes||'';['retailSyp','retailUsd','wholesaleSyp','wholesaleUsd','packQty'].forEach(k=>$(k).value=p[k]??'');$('formTitle').textContent='تعديل المادة';window.scrollTo({top:0,behavior:'smooth'})}
+window.editProduct=id=>{const p=products.find(x=>x.id===id);if(!p)return;$('editId').value=p.id;$('name').value=p.name;$('notes').value=p.notes||'';['retailUsd','wholesaleUsd','packQty'].forEach(k=>$(k).value=p[k]??'');updatePricePreviews();$('formTitle').textContent='تعديل المادة';window.scrollTo({top:0,behavior:'smooth'})}
 window.removeProduct=async id=>{if(confirm('هل تريد حذف هذه المادة؟'))await deleteProduct(id)}
-function clearForm(){['editId','name','notes','retailSyp','retailUsd','wholesaleSyp','wholesaleUsd','packQty'].forEach(k=>$(k).value='');$('formTitle').textContent='إضافة مادة جديدة';$('formMsg').textContent=''}
+function clearForm(){['editId','name','notes','retailUsd','wholesaleUsd','packQty'].forEach(k=>$(k).value='');$('formTitle').textContent='إضافة مادة جديدة';$('formMsg').textContent='';updatePricePreviews()}
 $('clearForm').onclick=clearForm;
 $('saveProduct').onclick=async()=>{const name=$('name').value.trim();if(!name){$('formMsg').textContent='يرجى إدخال اسم المادة.';return}
-let rS=num('retailSyp'),rU=num('retailUsd'),wS=num('wholesaleSyp'),wU=num('wholesaleUsd'),ex=rate();
-if(ex>0){if(rS&& !rU)rU=rS/ex;else if(rU&&!rS)rS=rU*ex;if(wS&&!wU)wU=wS/ex;else if(wU&&!wS)wS=wU*ex}
+const rU=num('retailUsd'),wU=num('wholesaleUsd'),ex=rate();
 const id=$('editId').value?Number($('editId').value):undefined;
-await saveProduct({...(id?{id}:{}),name,notes:$('notes').value.trim(),retailSyp:rS,retailUsd:rU,wholesaleSyp:wS,wholesaleUsd:wU,packQty:num('packQty')});clearForm();$('formMsg').textContent='تم حفظ المادة.'};
-$('search').oninput=render;
+await saveProduct({...(id?{id}:{}),name,notes:$('notes').value.trim(),retailUsd:rU,retailSyp:ex>0?rU*ex:0,wholesaleUsd:wU,wholesaleSyp:ex>0?wU*ex:0,packQty:num('packQty')});clearForm();$('formMsg').textContent='تم حفظ المادة وحساب أسعار الليرة تلقائياً.'};
+$('search').oninput=render;$('retailUsd').oninput=updatePricePreviews;$('wholesaleUsd').oninput=updatePricePreviews;
 function updateRateUI(){$('activeRate').textContent=rate()>0?fmt(rate())+' ل.س قديمة':'غير محدد';$('activeType').textContent=activeType();$('rateType').value=settings.rateType;$('parallelRate').value=settings.parallelRate||'';$('officialRate').value=settings.officialRate||'';$('rateStatus').textContent='المصدر الحالي: '+activeType()+' — '+(rate()>0?fmt(rate())+' ل.س قديمة لكل دولار':'لم يتم إدخال سعر لهذا المصدر')}
 $('saveRates').onclick=async()=>{settings={...settings,rateType:$('rateType').value,parallelRate:num('parallelRate'),officialRate:num('officialRate'),rateSource:'manual'};localStorage.setItem('daftar_settings',JSON.stringify(settings));await repriceProducts();updateRateUI();$('rateStatus').textContent='تم حفظ سعر الصرف وإعادة حساب أسعار المواد بالليرة السورية القديمة.'};
 $('rateType').onchange=async()=>{settings.rateType=$('rateType').value;await repriceProducts();localStorage.setItem('daftar_settings',JSON.stringify(settings));updateRateUI();$('rateStatus').textContent='تم التبديل وإعادة حساب الأسعار بالليرة القديمة.'};
 async function refreshRates(){const state=$('networkState');if(!navigator.onLine){state.textContent='لا يوجد اتصال بالإنترنت. سيبقى آخر سعر محفوظ مستخدماً.';return}state.textContent='جارٍ جلب سعر الصرف…';try{const response=await fetch(RATE_API,{cache:'no-store'});if(!response.ok)throw new Error('HTTP '+response.status);const data=await response.json();const usd=(data.rates||[]).find(x=>x.code==='USD');const parallelNew=Number(usd?.sell);const officialNew=Number(data.official?.sell);if(!(parallelNew>0)||!(officialNew>0))throw new Error('بيانات سعر الصرف غير مكتملة');settings.parallelRate=parallelNew*OLD_POUND_FACTOR;settings.officialRate=officialNew*OLD_POUND_FACTOR;settings.lastRateUpdate=data.updated_at||new Date().toISOString();settings.rateSource='Liraty';localStorage.setItem('daftar_settings',JSON.stringify(settings));await repriceProducts();updateRateUI();const stamp=new Date(settings.lastRateUpdate).toLocaleString('ar');state.textContent='تم التحديث: '+stamp+' — المصدر يرصد دمشق لا حمص؛ السعر مرجعي تقريبي. جميع القيم بالليرة القديمة.';$('rateStatus').textContent='تم جلب السعرين تلقائياً وحساب الأسعار بالليرة القديمة.'}catch(e){state.textContent='تعذر جلب السعر حالياً. تحقق من الإنترنت أو أدخل السعر يدوياً. آخر تحديث محفوظ: '+(settings.lastRateUpdate?new Date(settings.lastRateUpdate).toLocaleString('ar'):'لا يوجد')}}
 $('refreshInfo').onclick=refreshRates;
-$('calculate').onclick=()=>{const e=$('calcExpr').value.replace(/\s/g,'');if(!/^[0-9+\-*/().%]+$/.test(e)){$('calcResult').textContent='صيغة غير صالحة';return}try{const v=Function('"use strict";return ('+e.replace(/(\d+(?:\.\d+)?)%/g,'($1/100)')+')')();$('calcResult').textContent=Number.isFinite(v)?fmt(v):'تعذر الحساب'}catch{$('calcResult').textContent='تعذر الحساب'}};
+function calculateExpression(){const e=$('calcExpr').value.replace(/\s/g,'');if(!e){$('calcResult').textContent='0';return}if(!/^[0-9+\-*/().%]+$/.test(e)){$('calcResult').textContent='صيغة غير صالحة';return}try{const v=Function('"use strict";return ('+e.replace(/(\d+(?:\.\d+)?)%/g,'($1/100)')+')')();$('calcResult').textContent=Number.isFinite(v)?fmt(v):'تعذر الحساب'}catch{$('calcResult').textContent='تعذر الحساب'}}
+document.querySelectorAll('[data-value]').forEach(b=>b.onclick=()=>{$('calcExpr').value+=b.dataset.value;calculateExpression()});
+document.querySelectorAll('[data-calc]').forEach(b=>b.onclick=()=>{if(b.dataset.calc==='clear'){$('calcExpr').value='';$('calcResult').textContent='0'}else if(b.dataset.calc==='back'){$('calcExpr').value=$('calcExpr').value.slice(0,-1);calculateExpression()}else calculateExpression()});
+$('calcExpr').addEventListener('input',calculateExpression);
+
 $('convertBtn').onclick=()=>{const a=num('amount'),r=rate();if(r<=0){$('convertResult').textContent='أدخل سعر الصرف أولاً من قسم سعر الصرف.';return}const v=$('direction').value==='usd-syp'?a*r:a/r;$('convertResult').textContent=fmt(v)+($('direction').value==='usd-syp'?' ليرة سورية قديمة':' دولار أمريكي')};
 function listText(){return ['قائمة الأسعار — '+new Date().toLocaleDateString('ar'), 'سعر الصرف ('+activeType()+'): '+fmt(rate())+' ل.س قديمة لكل دولار','',...products.map(p=>`${p.name} | مفرق: ${fmt(p.retailSyp)} ل.س / ${fmt(p.retailUsd)} $ | جملة الطرد: ${fmt(p.wholesaleSyp)} ل.س / ${fmt(p.wholesaleUsd)} $ | عدد القطع: ${fmt(p.packQty)} | ملاحظات: ${p.notes||''}`)].join('\n')}
-$('shareList').onclick=async()=>{const text=listText();if(navigator.share){try{await navigator.share({title:'قائمة الأسعار',text})}catch(e){}}else{await navigator.clipboard.writeText(text);$('backupMsg').textContent='تم نسخ القائمة. يمكنك لصقها في واتساب أو أي تطبيق.'}};
+$('shareList').onclick=async()=>{const text=listText();if(navigator.share){try{await navigator.share({title:'تطبيق الأسعار السورية شرف',text})}catch(e){}}else{await navigator.clipboard.writeText(text);$('backupMsg').textContent='تم نسخ القائمة. يمكنك لصقها في واتساب أو أي تطبيق.'}};
 $('downloadCsv').onclick=()=>{const rows=[['اسم المادة','مفرق ل.س قديمة','مفرق دولار','جملة الطرد ل.س قديمة','جملة الطرد دولار','كمية الطرد','ملاحظات'],...products.map(p=>[p.name,p.retailSyp,p.retailUsd,p.wholesaleSyp,p.wholesaleUsd,p.packQty,p.notes])];const csv='\uFEFF'+rows.map(r=>r.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(',')).join('\n');download('prices.csv',csv,'text/csv;charset=utf-8')};
 $('exportJson').onclick=()=>download('daftar-backup.json',JSON.stringify({products,settings},null,2),'application/json');
 function download(name,data,type){const a=document.createElement('a'),u=URL.createObjectURL(new Blob([data],{type}));a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
@@ -193,6 +221,6 @@ if ('serviceWorker' in navigator) {
 }
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab))});
 $('printBtn').onclick=()=>window.print();
-(async()=>{try{db=await openDB();const saved=localStorage.getItem('daftar_settings');if(saved)settings={...settings,...JSON.parse(saved)};updateRateUI();await load();refreshRates();setInterval(()=>{if(document.visibilityState==='visible')refreshRates()},30*60*1000)}catch(e){alert('تعذر فتح قاعدة البيانات في هذا المتصفح. يرجى استخدام Chrome حديث.')}})();
+(async()=>{try{db=await openDB();const saved=localStorage.getItem('daftar_settings');if(saved)settings={...settings,...JSON.parse(saved)};updateRateUI();await load();await migrateUsdBase();if(rate()>0)await repriceProducts();updateRateUI();refreshRates();setInterval(()=>{if(document.visibilityState==='visible')refreshRates()},30*60*1000)}catch(e){alert('تعذر فتح قاعدة البيانات في هذا المتصفح. يرجى استخدام Chrome حديث.')}})();
 </script>
 </body></html>
