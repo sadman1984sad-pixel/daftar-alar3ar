@@ -58,7 +58,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
   <p>إدارة أسعار المواد بالدولار والليرة السورية</p>
   <div class="row no-print" style="margin-top:12px;justify-content:flex-start"><button type="button" class="secondary" id="themeToggle">🌙 المظهر الداكن</button></div>
   <div class="ratebox">
-    <div class="rate"><small>سعر الدولار المعتمد</small><strong id="activeRate">—</strong></div>
+    <div class="rate"><small>سعر الصرف المعتمد</small><strong id="activeRate">—</strong></div>
     <div class="rate"><small>مصدر السعر المختار</small><strong id="activeType">السوق الموازية</strong></div>
   </div>
 </header>
@@ -79,13 +79,13 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
       <div class="grid2">
         <div><label>اسم المادة *</label><input id="name" placeholder="مثال: سكر"></div>
         <div><label>الملاحظات</label><input id="notes" placeholder="مثال: نوع ممتاز / كيلو"></div>
-        <div><label>سعر الشراء الأساسي بالليرة السورية القديمة</label><input id="purchaseSyp" type="number" min="0" step="any" placeholder="أدخل سعر الشراء بالليرة"><small class="hint" id="purchaseUsdPreview">ما يعادله بالدولار يظهر هنا</small></div>
+        <div><label>سعر فاتورة الشراء الأصلية بالليرة السورية</label><input id="purchaseSyp" type="number" min="0" step="any" placeholder="أدخل سعر الفاتورة الأصلية"><small class="hint" id="purchaseUsdPreview">ما يعادله بالدولار يظهر هنا</small><small class="hint" id="currentCostPreview">التكلفة الحالية بعد تحديث الصرف: —</small></div>
         <div><label>نسبة الربح (%)</label><input id="profitPercent" type="number" min="0" step="0.1" value="10"><small class="hint">النسبة الافتراضية 10% ويمكن تغييرها لكل مادة</small></div>
-        <div><label>سعر المبيع بعد إضافة الربح (ل.س قديمة)</label><input id="sellSypPreview" type="text" readonly value="—"></div>
+        <div><label>سعر المبيع بعد إضافة الربح (ل.س)</label><input id="sellSypPreview" type="text" readonly value="—"></div>
         <div><label>سعر الجملة للطرد بالدولار ($)</label><input id="wholesaleUsd" type="number" min="0" step="0.01" placeholder="مثال: 8.40"><small class="hint" id="wholesaleSypPreview">السعر بالليرة يُحسب تلقائياً</small></div>
         <div><label>عدد القطع في الطرد</label><input id="packQty" type="number" min="0" step="1" placeholder="مثال: 12"></div>
       </div>
-      <p class="hint">أدخل سعر الشراء بالليرة السورية القديمة. يحوّل التطبيق قيمته إلى الدولار، ويضيف نسبة الربح المحددة لحساب سعر المبيع. تتغير قيمة الدولار عند تحديث سعر الصرف.</p>
+      <p class="hint">أدخل قيمة فاتورة الشراء الأصلية بالليرة. عند تعديل مادة موجودة، يعرض هذا الحقل قيمة الفاتورة الأصلية وليس تكلفة اليوم. غيّر هذا الرقم فقط عند تسجيل فاتورة شراء جديدة؛ أما تكلفة اليوم فتظهر أسفله وتُعاد حسب سعر الصرف الحالي دون تراكم الزيادات.</p>
       <button id="saveProduct">حفظ المادة</button>
       <span id="formMsg" class="hint"></span>
     </div>
@@ -94,7 +94,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
       <input id="search" class="no-print" placeholder="ابحث عن مادة...">
       <div class="stat" id="count">0 مادة</div>
       <div class="tablewrap"><table>
-        <thead><tr><th>اسم المادة</th><th>سعر الشراء / ل.س قديمة</th><th>سعر الشراء / $</th><th>نسبة الربح</th><th>سعر المبيع / ل.س قديمة</th><th>سعر المبيع / $</th><th>جملة الطرد / ل.س قديمة</th><th>جملة الطرد / $</th><th>كمية الطرد</th><th>سعر القطعة من الطرد / ل.س قديمة</th><th>ملاحظات</th><th class="no-print">إجراءات</th></tr></thead>
+        <thead><tr><th>اسم المادة</th><th>سعر الفاتورة الأصلي / ل.س</th><th>تكلفة الشراء الحالية / ل.س</th><th>سعر الشراء / $</th><th>نسبة الربح</th><th>سعر المبيع / ل.س</th><th>سعر المبيع / $</th><th>جملة الطرد / ل.س</th><th>جملة الطرد / $</th><th>كمية الطرد</th><th>سعر القطعة من الطرد / ل.س</th><th>ملاحظات</th><th class="no-print">إجراءات</th></tr></thead>
         <tbody id="productRows"><tr><td colspan="9">لا توجد مواد بعد. أضف أول مادة من النموذج أعلاه.</td></tr></tbody>
       </table></div>
     </div>
@@ -106,11 +106,11 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
       <label>مصدر السعر الذي تريد اعتماده</label>
       <select id="rateType"><option value="parallel">السوق الموازية</option><option value="official">السعر الرسمي</option></select>
       <div class="grid2">
-        <div><label>سعر السوق الموازية (ل.س قديمة لكل دولار)</label><input id="parallelRate" type="number" min="0" step="any"></div>
-        <div><label>السعر الرسمي (ل.س قديمة لكل دولار)</label><input id="officialRate" type="number" min="0" step="any"></div>
+        <div><label>سعر السوق الموازية (ل.س لكل دولار)</label><input id="parallelRate" type="number" min="0" step="any"></div>
+        <div><label>السعر الرسمي (ل.س لكل دولار)</label><input id="officialRate" type="number" min="0" step="any"></div>
       </div>
       <button id="saveRates">حفظ أسعار الصرف</button>
-      <p class="hint">جميع المبالغ المعروضة هنا بالليرة السورية القديمة. عند تغيير سعر الصرف يعيد التطبيق حساب الأسعار بالليرة من أسعار الدولار المحفوظة.</p>
+      <p class="hint">تبقى قيمة فاتورة الشراء الأصلية محفوظة. عند تغيير سعر الصرف يعيد التطبيق تقييم التكلفة الحالية بالليرة من قيمة الدولار المسجلة وقت الشراء، ثم يحسب سعر المبيع مع الربح.</p>
       <div class="result" id="rateStatus">لم يتم ضبط سعر الصرف بعد.</div>
     </div>
     <div class="card">
@@ -190,20 +190,25 @@ const num=id=>{const v=parseFloat($(id).value);return Number.isFinite(v)?v:0};
 const fmt=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:2});
 function rate(){return settings.rateType==='official'?Number(settings.officialRate):Number(settings.parallelRate)}
 async function migrateUsdBase(){
-  if(localStorage.getItem('daftar_purchase_base_migrated_v1')==='1')return;
-  const r=rate();
+  const r=rate();let changed=false;
   products=products.map(p=>{
-    const oldSaleSyp=Number(p.retailSyp)||((Number(p.retailUsd)||0)*r);
-    const margin=Number.isFinite(Number(p.profitPercent))?Number(p.profitPercent):10;
-    const purchaseSyp=Number(p.purchaseSyp)>0?Number(p.purchaseSyp):(oldSaleSyp>0?oldSaleSyp/(1+margin/100):0);
-    return {...p,purchaseSyp,profitPercent:margin,purchaseUsd:r>0?purchaseSyp/r:Number(p.purchaseUsd)||0,retailSyp:purchaseSyp*(1+margin/100),retailUsd:r>0?(purchaseSyp*(1+margin/100))/r:(Number(p.retailUsd)||0),wholesaleUsd:Number(p.wholesaleUsd)>0?Number(p.wholesaleUsd):(r>0?(Number(p.wholesaleSyp)||0)/r:0)};
+    const invoice=Number(p.invoicePurchaseSyp)>0?Number(p.invoicePurchaseSyp):(Number(p.purchaseSyp)||0);
+    const entryRate=Number(p.purchaseRateAtEntry)>0?Number(p.purchaseRateAtEntry):r;
+    let usd=Number(p.purchaseUsd)>0?Number(p.purchaseUsd):0;
+    if(!(usd>0)){
+      if(invoice>0&&entryRate>0)usd=invoice/entryRate;
+      else if(Number(p.purchaseSyp)>0&&r>0)usd=Number(p.purchaseSyp)/r;
+    }
+    const next={...p,invoicePurchaseSyp:invoice,purchaseRateAtEntry:entryRate||0,purchaseUsd:usd,purchaseBaseInitialized:true};
+    if(next.invoicePurchaseSyp!==p.invoicePurchaseSyp||next.purchaseRateAtEntry!==p.purchaseRateAtEntry||next.purchaseUsd!==p.purchaseUsd||p.purchaseBaseInitialized!==true)changed=true;
+    return next;
   });
-  await persistAllProducts();
-  localStorage.setItem('daftar_purchase_base_migrated_v1','1');
+  if(changed)await persistAllProducts();
+  localStorage.setItem('daftar_purchase_base_migrated_v2','1');
 }
-function persistAllProducts(){return tx('readwrite',(s,res)=>{const clear=s.clear();clear.onsuccess=()=>{if(!products.length){res();return}let left=products.length;products.forEach(p=>{const q=s.put(p);q.onsuccess=()=>{if(!--left)res()};q.onerror=()=>res()})}})}
-async function repriceProducts(){await migrateUsdBase();const r=rate();if(!(r>0))return;products=products.map(p=>{const ps=Number(p.purchaseSyp)||0,margin=Number(p.profitPercent??10),sale=ps*(1+margin/100);return {...p,purchaseUsd:ps/r,retailSyp:sale,retailUsd:sale/r,wholesaleSyp:Number(p.wholesaleUsd||0)*r}});await persistAllProducts();render();updatePricePreviews()}
-function updatePricePreviews(){const r=rate(),purchase=num('purchaseSyp'),margin=num('profitPercent');$('purchaseUsdPreview').textContent='ما يعادله بالدولار: '+(r>0?fmt(purchase/r)+' $':'أدخل سعر الصرف أولاً');$('sellSypPreview').value=fmt(purchase*(1+margin/100))+' ل.س قديمة';$('wholesaleSypPreview').textContent='بالليرة السورية القديمة: '+(r>0?fmt(num('wholesaleUsd')*r):'أدخل سعر الصرف أولاً')}
+function persistAllProducts(){return tx('readwrite',(s,res)=>{if(!products.length){res();return}let left=products.length;products.forEach(p=>{const q=s.put(p);q.onsuccess=()=>{if(!--left)res()};q.onerror=()=>res()})})}
+async function repriceProducts(){await migrateUsdBase();const r=rate();if(!(r>0))return;products=products.map(p=>{const costUsd=Number(p.purchaseUsd)>0?Number(p.purchaseUsd):0;const costSyp=costUsd*r,margin=Number(p.profitPercent??10),saleUsd=costUsd*(1+margin/100),saleSyp=saleUsd*r;return {...p,purchaseSyp:costSyp,retailSyp:saleSyp,retailUsd:saleUsd,wholesaleSyp:Number(p.wholesaleUsd||0)*r}});await persistAllProducts();render();updatePricePreviews()}
+function updatePricePreviews(){const r=rate(),invoice=num('purchaseSyp'),margin=num('profitPercent'),id=$('editId').value?Number($('editId').value):0,old=id?products.find(x=>x.id===id):null;const baseUsd=old&&Math.abs(invoice-Number(old.invoicePurchaseSyp??old.purchaseSyp??0))<0.005?Number(old.purchaseUsd||0):(r>0?invoice/r:0);const currentCost=baseUsd*r;$('purchaseUsdPreview').textContent='قيمة الفاتورة بالدولار عند تسجيلها: '+(baseUsd>0?fmt(baseUsd)+' $':'أدخل سعر الصرف أولاً');$('currentCostPreview').textContent='التكلفة الحالية بعد تحديث الصرف: '+(r>0&&baseUsd>0?fmt(currentCost)+' ل.س':'—');$('sellSypPreview').value=fmt(currentCost*(1+margin/100))+' ل.س';$('wholesaleSypPreview').textContent='بالليرة السورية القديمة: '+(r>0?fmt(num('wholesaleUsd')*r):'أدخل سعر الصرف أولاً')}
 
 function activeType(){return settings.rateType==='official'?'السعر الرسمي':'السوق الموازية'}
 function openDB(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,1);req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE,{keyPath:'id',autoIncrement:true})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
@@ -211,20 +216,20 @@ function tx(mode,fn){return new Promise((resolve,reject)=>{const t=db.transactio
 async function load(){products=await tx('readonly',(s,res)=>{const r=s.getAll();r.onsuccess=()=>res(r.result)});render()}
 async function saveProduct(p){await tx('readwrite',(s,res)=>{const r=p.id?s.put(p):s.add(p);r.onsuccess=()=>res()});await load()}
 async function deleteProduct(id){await tx('readwrite',(s,res)=>{const r=s.delete(id);r.onsuccess=()=>res()});await load()}
-function render(){const q=$('search').value.trim().toLowerCase();const list=products.filter(p=>(p.name||'').toLowerCase().includes(q));$('count').textContent=list.length+' مادة';$('productRows').innerHTML=list.length?list.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${fmt(p.purchaseSyp)}</td><td>${fmt(p.purchaseUsd)}</td><td>${fmt(p.profitPercent??10)}%</td><td>${fmt(p.retailSyp)}</td><td>${fmt(p.retailUsd)}</td><td>${fmt(p.wholesaleSyp)}</td><td>${fmt(p.wholesaleUsd)}</td><td>${fmt(p.packQty)}</td><td>${p.packQty>0?fmt(p.wholesaleSyp/p.packQty):'—'}</td><td>${esc(p.notes||'')}</td><td class="no-print"><div class="actions"><button class="secondary" onclick="editProduct(${p.id})">تعديل</button><button class="danger" onclick="removeProduct(${p.id})">حذف</button></div></td></tr>`).join(''):'<tr><td colspan="12">لا توجد نتائج.</td></tr>'}
+function render(){const q=$('search').value.trim().toLowerCase();const list=products.filter(p=>(p.name||'').toLowerCase().includes(q));$('count').textContent=list.length+' مادة';$('productRows').innerHTML=list.length?list.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${fmt(p.invoicePurchaseSyp??p.purchaseSyp)}</td><td>${fmt(p.purchaseSyp)}</td><td>${fmt(p.purchaseUsd)}</td><td>${fmt(p.profitPercent??10)}%</td><td>${fmt(p.retailSyp)}</td><td>${fmt(p.retailUsd)}</td><td>${fmt(p.wholesaleSyp)}</td><td>${fmt(p.wholesaleUsd)}</td><td>${fmt(p.packQty)}</td><td>${p.packQty>0?fmt(p.wholesaleSyp/p.packQty):'—'}</td><td>${esc(p.notes||'')}</td><td class="no-print"><div class="actions"><button class="secondary" onclick="editProduct(${p.id})">تعديل</button><button class="danger" onclick="removeProduct(${p.id})">حذف</button></div></td></tr>`).join(''):'<tr><td colspan="13">لا توجد نتائج.</td></tr>'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-window.editProduct=id=>{const p=products.find(x=>x.id===id);if(!p)return;$('editId').value=p.id;$('name').value=p.name;$('notes').value=p.notes||'';$('purchaseSyp').value=p.purchaseSyp??0;$('profitPercent').value=p.profitPercent??10;['wholesaleUsd','packQty'].forEach(k=>$(k).value=p[k]??'');updatePricePreviews();$('formTitle').textContent='تعديل المادة';window.scrollTo({top:0,behavior:'smooth'})}
+window.editProduct=id=>{const p=products.find(x=>x.id===id);if(!p)return;$('editId').value=p.id;$('name').value=p.name;$('notes').value=p.notes||'';$('purchaseSyp').value=p.invoicePurchaseSyp??p.purchaseSyp??0;$('profitPercent').value=p.profitPercent??10;['wholesaleUsd','packQty'].forEach(k=>$(k).value=p[k]??'');updatePricePreviews();$('formTitle').textContent='تعديل المادة';window.scrollTo({top:0,behavior:'smooth'})}
 window.removeProduct=async id=>{if(confirm('هل تريد حذف هذه المادة؟'))await deleteProduct(id)}
 function clearForm(){['editId','name','notes','purchaseSyp','wholesaleUsd','packQty'].forEach(k=>$(k).value='');$('profitPercent').value='10';$('formTitle').textContent='إضافة مادة جديدة';$('formMsg').textContent='';updatePricePreviews()}
 $('clearForm').onclick=clearForm;
 $('saveProduct').onclick=async()=>{const name=$('name').value.trim();if(!name){$('formMsg').textContent='يرجى إدخال اسم المادة.';return}
-const pS=num('purchaseSyp'),margin=num('profitPercent'),ex=rate(),sale=pS*(1+margin/100);
+const invoiceSyp=num('purchaseSyp'),margin=num('profitPercent'),ex=rate();
 const id=$('editId').value?Number($('editId').value):undefined;
-await saveProduct({...(id?{id}:{}),name,notes:$('notes').value.trim(),purchaseSyp:pS,purchaseUsd:ex>0?pS/ex:0,profitPercent:margin,retailSyp:sale,retailUsd:ex>0?sale/ex:0,wholesaleUsd:num('wholesaleUsd'),wholesaleSyp:ex>0?num('wholesaleUsd')*ex:0,packQty:num('packQty')});clearForm();$('formMsg').textContent='تم حفظ المادة وحساب سعر المبيع حسب نسبة الربح.'};
+const old=id?products.find(x=>x.id===id):null;const changedInvoice=!old||Math.abs(invoiceSyp-Number(old.invoicePurchaseSyp??old.purchaseSyp??0))>0.005;const invoicePurchaseSyp=changedInvoice?invoiceSyp:Number(old.invoicePurchaseSyp??old.purchaseSyp??invoiceSyp);const purchaseRateAtEntry=changedInvoice?ex:Number(old.purchaseRateAtEntry||ex);const purchaseUsd=changedInvoice?(ex>0?invoiceSyp/ex:0):Number(old.purchaseUsd||0);const currentCostSyp=ex>0?purchaseUsd*ex:0;const sale=currentCostSyp*(1+margin/100);await saveProduct({...(id?{id}:{}),name,notes:$('notes').value.trim(),invoicePurchaseSyp,purchaseRateAtEntry,purchaseBaseInitialized:true,purchaseSyp:currentCostSyp,purchaseUsd,profitPercent:margin,retailSyp:sale,retailUsd:purchaseUsd*(1+margin/100),wholesaleUsd:num('wholesaleUsd'),wholesaleSyp:ex>0?num('wholesaleUsd')*ex:0,packQty:num('packQty')});clearForm();$('formMsg').textContent='تم حفظ المادة وحساب سعر المبيع حسب نسبة الربح.'};
 $('search').oninput=render;$('purchaseSyp').oninput=updatePricePreviews;$('profitPercent').oninput=updatePricePreviews;$('wholesaleUsd').oninput=updatePricePreviews;
-function updateRateUI(){$('activeRate').textContent=rate()>0?fmt(rate())+' ل.س قديمة':'غير محدد';$('activeType').textContent=activeType();$('rateType').value=settings.rateType;$('parallelRate').value=settings.parallelRate||'';$('officialRate').value=settings.officialRate||'';$('rateStatus').textContent='المصدر الحالي: '+activeType()+' — '+(rate()>0?fmt(rate())+' ل.س قديمة لكل دولار':'لم يتم إدخال سعر لهذا المصدر')}
-$('saveRates').onclick=async()=>{settings={...settings,rateType:$('rateType').value,parallelRate:num('parallelRate'),officialRate:num('officialRate'),rateSource:'manual'};localStorage.setItem('daftar_settings',JSON.stringify(settings));await repriceProducts();updateRateUI();$('rateStatus').textContent='تم حفظ سعر الصرف وإعادة حساب أسعار المواد بالليرة السورية القديمة.'};
-$('rateType').onchange=async()=>{settings.rateType=$('rateType').value;await repriceProducts();localStorage.setItem('daftar_settings',JSON.stringify(settings));updateRateUI();$('rateStatus').textContent='تم التبديل وإعادة حساب الأسعار بالليرة القديمة.'};
+function updateRateUI(){$('activeRate').textContent=rate()>0?fmt(rate())+' ل.س':'غير محدد';$('activeType').textContent=activeType();$('rateType').value=settings.rateType;$('parallelRate').value=settings.parallelRate||'';$('officialRate').value=settings.officialRate||'';$('rateStatus').textContent='المصدر الحالي: '+activeType()+' — '+(rate()>0?fmt(rate())+' ل.س لكل دولار':'لم يتم إدخال سعر لهذا المصدر')}
+$('saveRates').onclick=async()=>{settings={...settings,rateType:$('rateType').value,parallelRate:num('parallelRate'),officialRate:num('officialRate'),rateSource:'manual'};localStorage.setItem('daftar_settings',JSON.stringify(settings));await repriceProducts();updateRateUI();$('rateStatus').textContent='تم حفظ سعر الصرف وإعادة حساب تكلفة الشراء وسعر المبيع بالليرة السورية وفق التكلفة الثابتة بالدولار.'};
+$('rateType').onchange=async()=>{settings.rateType=$('rateType').value;await repriceProducts();localStorage.setItem('daftar_settings',JSON.stringify(settings));updateRateUI();$('rateStatus').textContent='تم التبديل وإعادة حساب الأسعار بالليرة وفق التكلفة الثابتة بالدولار.'};
 async function refreshRates(){const state=$('networkState');if(!navigator.onLine){state.textContent='لا يوجد اتصال بالإنترنت. سيبقى آخر سعر محفوظ مستخدماً.';return}state.textContent='جارٍ جلب سعر الصرف…';try{const response=await fetch(RATE_API,{cache:'no-store'});if(!response.ok)throw new Error('HTTP '+response.status);const data=await response.json();const usd=(data.rates||[]).find(x=>x.code==='USD');const parallelNew=Number(usd?.sell);const officialNew=Number(data.official?.sell);if(!(parallelNew>0)||!(officialNew>0))throw new Error('بيانات سعر الصرف غير مكتملة');settings.parallelRate=parallelNew*OLD_POUND_FACTOR;settings.officialRate=officialNew*OLD_POUND_FACTOR;settings.lastRateUpdate=data.updated_at||new Date().toISOString();settings.rateSource='Liraty';localStorage.setItem('daftar_settings',JSON.stringify(settings));await repriceProducts();updateRateUI();const stamp=new Date(settings.lastRateUpdate).toLocaleString('ar');state.textContent='تم التحديث: '+stamp+' — المصدر يرصد دمشق لا حمص؛ السعر مرجعي تقريبي. جميع القيم بالليرة القديمة.';$('rateStatus').textContent='تم جلب السعرين تلقائياً وحساب الأسعار بالليرة القديمة.'}catch(e){state.textContent='تعذر جلب السعر حالياً. تحقق من الإنترنت أو أدخل السعر يدوياً. آخر تحديث محفوظ: '+(settings.lastRateUpdate?new Date(settings.lastRateUpdate).toLocaleString('ar'):'لا يوجد')}}
 $('refreshInfo').onclick=refreshRates;
 function calculateExpression(){const e=$('calcExpr').value.replace(/\s/g,'');if(!e){$('calcResult').textContent='0';return}if(!/^[0-9+\-*/().%]+$/.test(e)){$('calcResult').textContent='صيغة غير صالحة';return}try{const v=Function('"use strict";return ('+e.replace(/(\d+(?:\.\d+)?)%/g,'($1/100)')+')')();$('calcResult').textContent=Number.isFinite(v)?fmt(v):'تعذر الحساب'}catch{$('calcResult').textContent='تعذر الحساب'}}
@@ -233,9 +238,9 @@ document.querySelectorAll('[data-calc]').forEach(b=>b.onclick=()=>{if(b.dataset.
 $('calcExpr').addEventListener('input',calculateExpression);
 
 $('convertBtn').onclick=()=>{const a=num('amount'),r=rate();if(r<=0){$('convertResult').textContent='أدخل سعر الصرف أولاً من قسم سعر الصرف.';return}const v=$('direction').value==='usd-syp'?a*r:a/r;$('convertResult').textContent=fmt(v)+($('direction').value==='usd-syp'?' ليرة سورية قديمة':' دولار أمريكي')};
-function listText(){return ['قائمة الأسعار — '+new Date().toLocaleDateString('ar'), 'سعر الصرف ('+activeType()+'): '+fmt(rate())+' ل.س قديمة لكل دولار','',...products.map(p=>`${p.name} | شراء: ${fmt(p.purchaseSyp)} ل.س / ${fmt(p.purchaseUsd)} $ | ربح: ${fmt(p.profitPercent??10)}% | مبيع: ${fmt(p.retailSyp)} ل.س / ${fmt(p.retailUsd)} $ | جملة الطرد: ${fmt(p.wholesaleSyp)} ل.س / ${fmt(p.wholesaleUsd)} $ | عدد القطع: ${fmt(p.packQty)} | ملاحظات: ${p.notes||''}`)].join('\n')}
+function listText(){return ['قائمة الأسعار — '+new Date().toLocaleDateString('ar'), 'سعر الصرف ('+activeType()+'): '+fmt(rate())+' ل.س لكل دولار','',...products.map(p=>`${p.name} | شراء: ${fmt(p.purchaseSyp)} ل.س / ${fmt(p.purchaseUsd)} $ | ربح: ${fmt(p.profitPercent??10)}% | مبيع: ${fmt(p.retailSyp)} ل.س / ${fmt(p.retailUsd)} $ | جملة الطرد: ${fmt(p.wholesaleSyp)} ل.س / ${fmt(p.wholesaleUsd)} $ | عدد القطع: ${fmt(p.packQty)} | ملاحظات: ${p.notes||''}`)].join('\n')}
 $('shareList').onclick=async()=>{const text=listText();if(navigator.share){try{await navigator.share({title:'تطبيق الأسعار السورية شرف',text})}catch(e){}}else{await navigator.clipboard.writeText(text);$('backupMsg').textContent='تم نسخ القائمة. يمكنك لصقها في واتساب أو أي تطبيق.'}};
-$('downloadCsv').onclick=()=>{const rows=[['اسم المادة','شراء ل.س قديمة','شراء دولار','نسبة الربح','مبيع ل.س قديمة','مبيع دولار','جملة الطرد ل.س قديمة','جملة الطرد دولار','كمية الطرد','ملاحظات'],...products.map(p=>[p.name,p.purchaseSyp,p.purchaseUsd,p.profitPercent,p.retailSyp,p.retailUsd,p.wholesaleSyp,p.wholesaleUsd,p.packQty,p.notes])];const csv='\uFEFF'+rows.map(r=>r.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(',')).join('\n');download('prices.csv',csv,'text/csv;charset=utf-8')};
+$('downloadCsv').onclick=()=>{const rows=[['اسم المادة','شراء ل.س','شراء دولار','نسبة الربح','مبيع ل.س','مبيع دولار','جملة الطرد ل.س','جملة الطرد دولار','كمية الطرد','ملاحظات'],...products.map(p=>[p.name,p.purchaseSyp,p.purchaseUsd,p.profitPercent,p.retailSyp,p.retailUsd,p.wholesaleSyp,p.wholesaleUsd,p.packQty,p.notes])];const csv='\uFEFF'+rows.map(r=>r.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(',')).join('\n');download('prices.csv',csv,'text/csv;charset=utf-8')};
 $('exportJson').onclick=()=>download('daftar-backup.json',JSON.stringify({products,settings},null,2),'application/json');
 function download(name,data,type){const a=document.createElement('a'),u=URL.createObjectURL(new Blob([data],{type}));a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
 $('importBtn').onclick=()=>$('importFile').click();
