@@ -3,23 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#173b32">
+<meta name="theme-color" content="#1456a0">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon-sharaf-192.png">
 <title>تطبيق الأسعار السورية شرف</title>
 <style>
-:root{--green:#173b32;--green2:#245b4b;--bg:#f4f6f4;--card:#fff;--ink:#18231f;--muted:#6c7771;--line:#e2e8e3;--red:#b42318}
+:root{--blue:#1456a0;--blue2:#1d70c9;--bg:#f2f6fc;--card:#fff;--ink:#172334;--muted:#63748a;--line:#dbe5f1;--red:#b42318;--soft:#e8f1fc}
+body[data-theme="dark"]{--blue:#0b2342;--blue2:#164b82;--bg:#0b1422;--card:#142238;--ink:#e8f0fa;--muted:#a9bad0;--line:#2a3d57;--soft:#1b3554}
+body[data-theme="dark"] input,body[data-theme="dark"] select,body[data-theme="dark"] textarea{background:#0e1b2d;color:var(--ink);border-color:var(--line)}
+body[data-theme="dark"] .tablewrap{background:var(--card)}body[data-theme="dark"] th{background:#1c3554;color:#e5f0ff}body[data-theme="dark"] .result{background:#1b3554;color:#e5f0ff}body[data-theme="dark"] button.secondary{background:#263d59;color:#e8f0fa}body[data-theme="dark"] .calc-screen{background:#eaf1fc;color:#14253b}body[data-theme="dark"] .calc-screen input{background:transparent;color:#53637a}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif}
-header{background:var(--green);color:white;padding:22px 16px 18px;border-radius:0 0 22px 22px}
+header{background:var(--blue);color:white;padding:22px 16px 18px;border-radius:0 0 22px 22px}
 header h1{font-size:23px;margin:0 0 6px}header p{margin:0;color:#d5e5dc;font-size:13px}
 main{max-width:1050px;margin:auto;padding:14px}
 .ratebox{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
 .rate{background:#ffffff17;border:1px solid #ffffff30;border-radius:12px;padding:10px}
 .rate small{display:block;color:#d5e5dc;margin-bottom:6px}.rate strong{font-size:18px}
 .tabs{display:flex;gap:8px;overflow:auto;margin:14px 0}
-button,.btn{border:0;border-radius:10px;padding:11px 14px;font-weight:700;font-size:14px;cursor:pointer;background:var(--green);color:#fff}
-button.secondary{background:#e8efea;color:var(--green)}button.danger{background:#fff0ee;color:var(--red)}
-.tabs button{white-space:nowrap}.tabs button.active{background:var(--green2);outline:2px solid #b6d2c4}
+button,.btn{border:0;border-radius:10px;padding:11px 14px;font-weight:700;font-size:14px;cursor:pointer;background:var(--blue);color:#fff}
+button.secondary{background:#e8f1fc;color:var(--blue)}button.danger{background:#fff0ee;color:var(--red)}
+.tabs button{white-space:nowrap}.tabs button.active{background:var(--blue2);outline:2px solid #b6d2c4}
 .panel{display:none}.panel.active{display:block}
 .card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px #10251a08}
 .row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.row>*{flex:1}
@@ -28,21 +31,21 @@ input,select,textarea{width:100%;padding:11px;border:1px solid #d5ded7;border-ra
 textarea{min-height:65px}
 h2{font-size:18px;margin:4px 0 12px}.hint{font-size:12px;color:var(--muted);line-height:1.7}
 .tablewrap{overflow:auto;border:1px solid var(--line);border-radius:12px;background:white}
-table{border-collapse:collapse;width:100%;min-width:850px;font-size:13px}
+table{border-collapse:collapse;width:100%;min-width:1250px;font-size:13px}
 th,td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:right;vertical-align:middle}
-th{background:#edf3ef;color:#25483b;position:sticky;top:0}
+th{background:#e8f1fc;color:#174b86;position:sticky;top:0}
 td .actions{display:flex;gap:5px}td button{padding:7px 9px;font-size:12px}
 .stat{font-size:12px;color:var(--muted);margin:8px 0}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.result{background:#edf4ef;padding:13px;border-radius:10px;margin-top:12px;font-weight:bold;color:var(--green)}
+.result{background:#e8f1fc;padding:13px;border-radius:10px;margin-top:12px;font-weight:bold;color:var(--blue)}
 .hidden{display:none!important}
-.calc-shell{max-width:390px;margin:8px auto;background:#17221d;border-radius:22px;padding:16px;box-shadow:0 8px 24px #10251a20}
+.calc-shell{max-width:390px;margin:8px auto;background:#102d50;border-radius:22px;padding:16px;box-shadow:0 8px 24px #10251a20}
 .calc-screen{background:#eaf1ec;color:#14251c;border-radius:12px;min-height:88px;padding:14px;text-align:left;direction:ltr;display:flex;flex-direction:column;justify-content:center;overflow:hidden;margin-bottom:13px}
 .calc-screen #calcExpr{border:0;background:transparent;padding:0;text-align:right;font-size:19px;color:#53635a;outline:none}
 .calc-screen #calcResult{font-size:30px;font-weight:700;text-align:right;direction:ltr;min-height:36px;overflow-wrap:anywhere}
 .calc-keys{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
-.calc-keys button{height:58px;border-radius:14px;font-size:21px;background:#31443a;color:#fff;box-shadow:inset 0 -2px #17251e}
-.calc-keys button.op{background:#567463}.calc-keys button.utility{background:#dce8df;color:#1b392b}.calc-keys button.equals{background:#c58b35;color:#fff}.calc-keys button.zero{grid-column:span 2}
+.calc-keys button{height:58px;border-radius:14px;font-size:21px;background:#245b91;color:#fff;box-shadow:inset 0 -2px #17251e}
+.calc-keys button.op{background:#3979b9}.calc-keys button.utility{background:#dceafb;color:#174b86}.calc-keys button.equals{background:#c58b35;color:#fff}.calc-keys button.zero{grid-column:span 2}
 .calc-help{text-align:center;margin-top:10px}
 footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
 @media(max-width:560px){.grid2{grid-template-columns:1fr}.ratebox{grid-template-columns:1fr 1fr}header{padding-top:18px}}
@@ -53,6 +56,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
 <header>
   <h1>تطبيق الأسعار السورية شرف</h1>
   <p>إدارة أسعار المواد بالدولار والليرة السورية</p>
+  <div class="row no-print" style="margin-top:12px;justify-content:flex-start"><button type="button" class="secondary" id="themeToggle">🌙 المظهر الداكن</button></div>
   <div class="ratebox">
     <div class="rate"><small>سعر الدولار المعتمد</small><strong id="activeRate">—</strong></div>
     <div class="rate"><small>مصدر السعر المختار</small><strong id="activeType">السوق الموازية</strong></div>
@@ -65,6 +69,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
     <button data-tab="calc">الحاسبة</button>
     <button data-tab="convert">محول العملات</button>
     <button data-tab="backup">المشاركة والنسخ</button>
+    <button data-tab="prayer">أوقات الصلاة</button>
   </div>
 
   <section id="products" class="panel active">
@@ -74,11 +79,13 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
       <div class="grid2">
         <div><label>اسم المادة *</label><input id="name" placeholder="مثال: سكر"></div>
         <div><label>الملاحظات</label><input id="notes" placeholder="مثال: نوع ممتاز / كيلو"></div>
-        <div><label>سعر المفرق للقطعة بالدولار ($)</label><input id="retailUsd" type="number" min="0" step="0.01" placeholder="مثال: 0.70"><small class="hint" id="retailSypPreview">السعر بالليرة يُحسب تلقائياً</small></div>
+        <div><label>سعر الشراء الأساسي بالليرة السورية القديمة</label><input id="purchaseSyp" type="number" min="0" step="any" placeholder="أدخل سعر الشراء بالليرة"><small class="hint" id="purchaseUsdPreview">ما يعادله بالدولار يظهر هنا</small></div>
+        <div><label>نسبة الربح (%)</label><input id="profitPercent" type="number" min="0" step="0.1" value="10"><small class="hint">النسبة الافتراضية 10% ويمكن تغييرها لكل مادة</small></div>
+        <div><label>سعر المبيع بعد إضافة الربح (ل.س قديمة)</label><input id="sellSypPreview" type="text" readonly value="—"></div>
         <div><label>سعر الجملة للطرد بالدولار ($)</label><input id="wholesaleUsd" type="number" min="0" step="0.01" placeholder="مثال: 8.40"><small class="hint" id="wholesaleSypPreview">السعر بالليرة يُحسب تلقائياً</small></div>
         <div><label>عدد القطع في الطرد</label><input id="packQty" type="number" min="0" step="1" placeholder="مثال: 12"></div>
       </div>
-      <p class="hint">أدخل الأسعار بالدولار فقط. يحسب التطبيق أسعار الليرة السورية القديمة تلقائياً، ويعيد حساب جميع المواد عند تغيير سعر الصرف.</p>
+      <p class="hint">أدخل سعر الشراء بالليرة السورية القديمة. يحوّل التطبيق قيمته إلى الدولار، ويضيف نسبة الربح المحددة لحساب سعر المبيع. تتغير قيمة الدولار عند تحديث سعر الصرف.</p>
       <button id="saveProduct">حفظ المادة</button>
       <span id="formMsg" class="hint"></span>
     </div>
@@ -87,7 +94,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
       <input id="search" class="no-print" placeholder="ابحث عن مادة...">
       <div class="stat" id="count">0 مادة</div>
       <div class="tablewrap"><table>
-        <thead><tr><th>اسم المادة</th><th>مفرق / ل.س قديمة</th><th>مفرق / $</th><th>جملة الطرد / ل.س قديمة</th><th>جملة الطرد / $</th><th>كمية الطرد</th><th>سعر القطعة من الطرد / ل.س قديمة</th><th>ملاحظات</th><th class="no-print">إجراءات</th></tr></thead>
+        <thead><tr><th>اسم المادة</th><th>سعر الشراء / ل.س قديمة</th><th>سعر الشراء / $</th><th>نسبة الربح</th><th>سعر المبيع / ل.س قديمة</th><th>سعر المبيع / $</th><th>جملة الطرد / ل.س قديمة</th><th>جملة الطرد / $</th><th>كمية الطرد</th><th>سعر القطعة من الطرد / ل.س قديمة</th><th>ملاحظات</th><th class="no-print">إجراءات</th></tr></thead>
         <tbody id="productRows"><tr><td colspan="9">لا توجد مواد بعد. أضف أول مادة من النموذج أعلاه.</td></tr></tbody>
       </table></div>
     </div>
@@ -141,6 +148,20 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
     </div>
   </section>
 
+  <section id="prayer" class="panel">
+    <div class="card">
+      <h2>أوقات الصلاة اليومية — حمص، سوريا</h2>
+      <p class="hint">تُجلب المواقيت عبر الإنترنت من خدمة مواقيت الصلاة، وفق مدينة حمص. قد تختلف الدقائق قليلاً بحسب طريقة الحساب المعتمدة.</p>
+      <div class="grid2" id="prayerTimes">
+        <div class="rate"><small>الفجر</small><strong id="prFajr">—</strong></div><div class="rate"><small>الشروق</small><strong id="prSunrise">—</strong></div>
+        <div class="rate"><small>الظهر</small><strong id="prDhuhr">—</strong></div><div class="rate"><small>العصر</small><strong id="prAsr">—</strong></div>
+        <div class="rate"><small>المغرب</small><strong id="prMaghrib">—</strong></div><div class="rate"><small>العشاء</small><strong id="prIsha">—</strong></div>
+      </div>
+      <button class="secondary" id="refreshPrayer">تحديث أوقات الصلاة الآن</button>
+      <div class="hint" id="prayerStatus">لم يتم جلب المواقيت بعد.</div>
+    </div>
+  </section>
+
   <section id="backup" class="panel">
     <div class="card">
       <h2>المشاركة والنسخ الاحتياطي</h2>
@@ -161,7 +182,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;padding:18px}
 <footer>تطبيق الأسعار السورية شرف — تحفظ البيانات محلياً على هذا الجهاز</footer>
 <script>
 const DB_NAME='DaftarAlAsaarDB', STORE='products';
-let db, products=[], settings={rateType:'parallel',parallelRate:0,officialRate:0,lastRateUpdate:null,rateSource:'manual'};
+let db, products=[], settings={rateType:'parallel',parallelRate:0,officialRate:0,lastRateUpdate:null,rateSource:'manual',theme:'light'};
 const RATE_API='https://liraty.com/api/v1/latest?city=damascus';
 const OLD_POUND_FACTOR=100;
 const $=id=>document.getElementById(id);
@@ -169,17 +190,20 @@ const num=id=>{const v=parseFloat($(id).value);return Number.isFinite(v)?v:0};
 const fmt=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:2});
 function rate(){return settings.rateType==='official'?Number(settings.officialRate):Number(settings.parallelRate)}
 async function migrateUsdBase(){
-  if(localStorage.getItem('daftar_usd_base_migrated')==='1'||!(rate()>0))return;
-  products=products.map(p=>({...p,
-    retailUsd:(Number(p.retailUsd)>0?Number(p.retailUsd):(Number(p.retailSyp)>0?Number(p.retailSyp)/rate():0)),
-    wholesaleUsd:(Number(p.wholesaleUsd)>0?Number(p.wholesaleUsd):(Number(p.wholesaleSyp)>0?Number(p.wholesaleSyp)/rate():0))
-  }));
+  if(localStorage.getItem('daftar_purchase_base_migrated_v1')==='1')return;
+  const r=rate();
+  products=products.map(p=>{
+    const oldSaleSyp=Number(p.retailSyp)||((Number(p.retailUsd)||0)*r);
+    const margin=Number.isFinite(Number(p.profitPercent))?Number(p.profitPercent):10;
+    const purchaseSyp=Number(p.purchaseSyp)>0?Number(p.purchaseSyp):(oldSaleSyp>0?oldSaleSyp/(1+margin/100):0);
+    return {...p,purchaseSyp,profitPercent:margin,purchaseUsd:r>0?purchaseSyp/r:Number(p.purchaseUsd)||0,retailSyp:purchaseSyp*(1+margin/100),retailUsd:r>0?(purchaseSyp*(1+margin/100))/r:(Number(p.retailUsd)||0),wholesaleUsd:Number(p.wholesaleUsd)>0?Number(p.wholesaleUsd):(r>0?(Number(p.wholesaleSyp)||0)/r:0)};
+  });
   await persistAllProducts();
-  localStorage.setItem('daftar_usd_base_migrated','1');
+  localStorage.setItem('daftar_purchase_base_migrated_v1','1');
 }
 function persistAllProducts(){return tx('readwrite',(s,res)=>{const clear=s.clear();clear.onsuccess=()=>{if(!products.length){res();return}let left=products.length;products.forEach(p=>{const q=s.put(p);q.onsuccess=()=>{if(!--left)res()};q.onerror=()=>res()})}})}
-async function repriceProducts(){await migrateUsdBase();const r=rate();if(!(r>0))return;products=products.map(p=>({...p,retailSyp:Number(p.retailUsd||0)*r,wholesaleSyp:Number(p.wholesaleUsd||0)*r}));await persistAllProducts();render();updatePricePreviews()}
-function updatePricePreviews(){const r=rate();$('retailSypPreview').textContent='بالليرة السورية القديمة: '+(r>0?fmt(num('retailUsd')*r):'أدخل سعر الصرف أولاً');$('wholesaleSypPreview').textContent='بالليرة السورية القديمة: '+(r>0?fmt(num('wholesaleUsd')*r):'أدخل سعر الصرف أولاً')}
+async function repriceProducts(){await migrateUsdBase();const r=rate();if(!(r>0))return;products=products.map(p=>{const ps=Number(p.purchaseSyp)||0,margin=Number(p.profitPercent??10),sale=ps*(1+margin/100);return {...p,purchaseUsd:ps/r,retailSyp:sale,retailUsd:sale/r,wholesaleSyp:Number(p.wholesaleUsd||0)*r}});await persistAllProducts();render();updatePricePreviews()}
+function updatePricePreviews(){const r=rate(),purchase=num('purchaseSyp'),margin=num('profitPercent');$('purchaseUsdPreview').textContent='ما يعادله بالدولار: '+(r>0?fmt(purchase/r)+' $':'أدخل سعر الصرف أولاً');$('sellSypPreview').value=fmt(purchase*(1+margin/100))+' ل.س قديمة';$('wholesaleSypPreview').textContent='بالليرة السورية القديمة: '+(r>0?fmt(num('wholesaleUsd')*r):'أدخل سعر الصرف أولاً')}
 
 function activeType(){return settings.rateType==='official'?'السعر الرسمي':'السوق الموازية'}
 function openDB(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,1);req.onupgradeneeded=()=>{const d=req.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE,{keyPath:'id',autoIncrement:true})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
@@ -187,17 +211,17 @@ function tx(mode,fn){return new Promise((resolve,reject)=>{const t=db.transactio
 async function load(){products=await tx('readonly',(s,res)=>{const r=s.getAll();r.onsuccess=()=>res(r.result)});render()}
 async function saveProduct(p){await tx('readwrite',(s,res)=>{const r=p.id?s.put(p):s.add(p);r.onsuccess=()=>res()});await load()}
 async function deleteProduct(id){await tx('readwrite',(s,res)=>{const r=s.delete(id);r.onsuccess=()=>res()});await load()}
-function render(){const q=$('search').value.trim().toLowerCase();const list=products.filter(p=>(p.name||'').toLowerCase().includes(q));$('count').textContent=list.length+' مادة';$('productRows').innerHTML=list.length?list.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${fmt(p.retailSyp)}</td><td>${fmt(p.retailUsd)}</td><td>${fmt(p.wholesaleSyp)}</td><td>${fmt(p.wholesaleUsd)}</td><td>${fmt(p.packQty)}</td><td>${p.packQty>0?fmt(p.wholesaleSyp/p.packQty):'—'}</td><td>${esc(p.notes||'')}</td><td class="no-print"><div class="actions"><button class="secondary" onclick="editProduct(${p.id})">تعديل</button><button class="danger" onclick="removeProduct(${p.id})">حذف</button></div></td></tr>`).join(''):'<tr><td colspan="9">لا توجد نتائج.</td></tr>'}
+function render(){const q=$('search').value.trim().toLowerCase();const list=products.filter(p=>(p.name||'').toLowerCase().includes(q));$('count').textContent=list.length+' مادة';$('productRows').innerHTML=list.length?list.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${fmt(p.purchaseSyp)}</td><td>${fmt(p.purchaseUsd)}</td><td>${fmt(p.profitPercent??10)}%</td><td>${fmt(p.retailSyp)}</td><td>${fmt(p.retailUsd)}</td><td>${fmt(p.wholesaleSyp)}</td><td>${fmt(p.wholesaleUsd)}</td><td>${fmt(p.packQty)}</td><td>${p.packQty>0?fmt(p.wholesaleSyp/p.packQty):'—'}</td><td>${esc(p.notes||'')}</td><td class="no-print"><div class="actions"><button class="secondary" onclick="editProduct(${p.id})">تعديل</button><button class="danger" onclick="removeProduct(${p.id})">حذف</button></div></td></tr>`).join(''):'<tr><td colspan="12">لا توجد نتائج.</td></tr>'}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-window.editProduct=id=>{const p=products.find(x=>x.id===id);if(!p)return;$('editId').value=p.id;$('name').value=p.name;$('notes').value=p.notes||'';['retailUsd','wholesaleUsd','packQty'].forEach(k=>$(k).value=p[k]??'');updatePricePreviews();$('formTitle').textContent='تعديل المادة';window.scrollTo({top:0,behavior:'smooth'})}
+window.editProduct=id=>{const p=products.find(x=>x.id===id);if(!p)return;$('editId').value=p.id;$('name').value=p.name;$('notes').value=p.notes||'';$('purchaseSyp').value=p.purchaseSyp??0;$('profitPercent').value=p.profitPercent??10;['wholesaleUsd','packQty'].forEach(k=>$(k).value=p[k]??'');updatePricePreviews();$('formTitle').textContent='تعديل المادة';window.scrollTo({top:0,behavior:'smooth'})}
 window.removeProduct=async id=>{if(confirm('هل تريد حذف هذه المادة؟'))await deleteProduct(id)}
-function clearForm(){['editId','name','notes','retailUsd','wholesaleUsd','packQty'].forEach(k=>$(k).value='');$('formTitle').textContent='إضافة مادة جديدة';$('formMsg').textContent='';updatePricePreviews()}
+function clearForm(){['editId','name','notes','purchaseSyp','wholesaleUsd','packQty'].forEach(k=>$(k).value='');$('profitPercent').value='10';$('formTitle').textContent='إضافة مادة جديدة';$('formMsg').textContent='';updatePricePreviews()}
 $('clearForm').onclick=clearForm;
 $('saveProduct').onclick=async()=>{const name=$('name').value.trim();if(!name){$('formMsg').textContent='يرجى إدخال اسم المادة.';return}
-const rU=num('retailUsd'),wU=num('wholesaleUsd'),ex=rate();
+const pS=num('purchaseSyp'),margin=num('profitPercent'),ex=rate(),sale=pS*(1+margin/100);
 const id=$('editId').value?Number($('editId').value):undefined;
-await saveProduct({...(id?{id}:{}),name,notes:$('notes').value.trim(),retailUsd:rU,retailSyp:ex>0?rU*ex:0,wholesaleUsd:wU,wholesaleSyp:ex>0?wU*ex:0,packQty:num('packQty')});clearForm();$('formMsg').textContent='تم حفظ المادة وحساب أسعار الليرة تلقائياً.'};
-$('search').oninput=render;$('retailUsd').oninput=updatePricePreviews;$('wholesaleUsd').oninput=updatePricePreviews;
+await saveProduct({...(id?{id}:{}),name,notes:$('notes').value.trim(),purchaseSyp:pS,purchaseUsd:ex>0?pS/ex:0,profitPercent:margin,retailSyp:sale,retailUsd:ex>0?sale/ex:0,wholesaleUsd:num('wholesaleUsd'),wholesaleSyp:ex>0?num('wholesaleUsd')*ex:0,packQty:num('packQty')});clearForm();$('formMsg').textContent='تم حفظ المادة وحساب سعر المبيع حسب نسبة الربح.'};
+$('search').oninput=render;$('purchaseSyp').oninput=updatePricePreviews;$('profitPercent').oninput=updatePricePreviews;$('wholesaleUsd').oninput=updatePricePreviews;
 function updateRateUI(){$('activeRate').textContent=rate()>0?fmt(rate())+' ل.س قديمة':'غير محدد';$('activeType').textContent=activeType();$('rateType').value=settings.rateType;$('parallelRate').value=settings.parallelRate||'';$('officialRate').value=settings.officialRate||'';$('rateStatus').textContent='المصدر الحالي: '+activeType()+' — '+(rate()>0?fmt(rate())+' ل.س قديمة لكل دولار':'لم يتم إدخال سعر لهذا المصدر')}
 $('saveRates').onclick=async()=>{settings={...settings,rateType:$('rateType').value,parallelRate:num('parallelRate'),officialRate:num('officialRate'),rateSource:'manual'};localStorage.setItem('daftar_settings',JSON.stringify(settings));await repriceProducts();updateRateUI();$('rateStatus').textContent='تم حفظ سعر الصرف وإعادة حساب أسعار المواد بالليرة السورية القديمة.'};
 $('rateType').onchange=async()=>{settings.rateType=$('rateType').value;await repriceProducts();localStorage.setItem('daftar_settings',JSON.stringify(settings));updateRateUI();$('rateStatus').textContent='تم التبديل وإعادة حساب الأسعار بالليرة القديمة.'};
@@ -209,18 +233,23 @@ document.querySelectorAll('[data-calc]').forEach(b=>b.onclick=()=>{if(b.dataset.
 $('calcExpr').addEventListener('input',calculateExpression);
 
 $('convertBtn').onclick=()=>{const a=num('amount'),r=rate();if(r<=0){$('convertResult').textContent='أدخل سعر الصرف أولاً من قسم سعر الصرف.';return}const v=$('direction').value==='usd-syp'?a*r:a/r;$('convertResult').textContent=fmt(v)+($('direction').value==='usd-syp'?' ليرة سورية قديمة':' دولار أمريكي')};
-function listText(){return ['قائمة الأسعار — '+new Date().toLocaleDateString('ar'), 'سعر الصرف ('+activeType()+'): '+fmt(rate())+' ل.س قديمة لكل دولار','',...products.map(p=>`${p.name} | مفرق: ${fmt(p.retailSyp)} ل.س / ${fmt(p.retailUsd)} $ | جملة الطرد: ${fmt(p.wholesaleSyp)} ل.س / ${fmt(p.wholesaleUsd)} $ | عدد القطع: ${fmt(p.packQty)} | ملاحظات: ${p.notes||''}`)].join('\n')}
+function listText(){return ['قائمة الأسعار — '+new Date().toLocaleDateString('ar'), 'سعر الصرف ('+activeType()+'): '+fmt(rate())+' ل.س قديمة لكل دولار','',...products.map(p=>`${p.name} | شراء: ${fmt(p.purchaseSyp)} ل.س / ${fmt(p.purchaseUsd)} $ | ربح: ${fmt(p.profitPercent??10)}% | مبيع: ${fmt(p.retailSyp)} ل.س / ${fmt(p.retailUsd)} $ | جملة الطرد: ${fmt(p.wholesaleSyp)} ل.س / ${fmt(p.wholesaleUsd)} $ | عدد القطع: ${fmt(p.packQty)} | ملاحظات: ${p.notes||''}`)].join('\n')}
 $('shareList').onclick=async()=>{const text=listText();if(navigator.share){try{await navigator.share({title:'تطبيق الأسعار السورية شرف',text})}catch(e){}}else{await navigator.clipboard.writeText(text);$('backupMsg').textContent='تم نسخ القائمة. يمكنك لصقها في واتساب أو أي تطبيق.'}};
-$('downloadCsv').onclick=()=>{const rows=[['اسم المادة','مفرق ل.س قديمة','مفرق دولار','جملة الطرد ل.س قديمة','جملة الطرد دولار','كمية الطرد','ملاحظات'],...products.map(p=>[p.name,p.retailSyp,p.retailUsd,p.wholesaleSyp,p.wholesaleUsd,p.packQty,p.notes])];const csv='\uFEFF'+rows.map(r=>r.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(',')).join('\n');download('prices.csv',csv,'text/csv;charset=utf-8')};
+$('downloadCsv').onclick=()=>{const rows=[['اسم المادة','شراء ل.س قديمة','شراء دولار','نسبة الربح','مبيع ل.س قديمة','مبيع دولار','جملة الطرد ل.س قديمة','جملة الطرد دولار','كمية الطرد','ملاحظات'],...products.map(p=>[p.name,p.purchaseSyp,p.purchaseUsd,p.profitPercent,p.retailSyp,p.retailUsd,p.wholesaleSyp,p.wholesaleUsd,p.packQty,p.notes])];const csv='\uFEFF'+rows.map(r=>r.map(x=>'"'+String(x??'').replace(/"/g,'""')+'"').join(',')).join('\n');download('prices.csv',csv,'text/csv;charset=utf-8')};
 $('exportJson').onclick=()=>download('daftar-backup.json',JSON.stringify({products,settings},null,2),'application/json');
 function download(name,data,type){const a=document.createElement('a'),u=URL.createObjectURL(new Blob([data],{type}));a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
 $('importBtn').onclick=()=>$('importFile').click();
 $('importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const data=JSON.parse(await f.text());if(!Array.isArray(data.products))throw Error();await tx('readwrite',(s,res)=>{const c=s.clear();c.onsuccess=()=>{let pending=data.products.length;if(!pending){res();return}data.products.forEach(p=>{const x={...p};delete x.id;const r=s.add(x);r.onsuccess=()=>{if(!--pending)res()}})}});if(data.settings){settings=data.settings;localStorage.setItem('daftar_settings',JSON.stringify(settings))}await load();updateRateUI();$('backupMsg').textContent='تمت استعادة النسخة بنجاح.'}catch{$('backupMsg').textContent='تعذر استعادة الملف. تأكد أنه نسخة صحيحة من التطبيق.'}e.target.value=''};
+
+function applyTheme(theme){document.body.dataset.theme=theme;settings.theme=theme;localStorage.setItem('daftar_settings',JSON.stringify(settings));$('themeToggle').textContent=theme==='dark'?'☀️ المظهر الساطع':'🌙 المظهر الداكن';const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=theme==='dark'?'#0b2342':'#1456a0'}
+$('themeToggle').onclick=()=>applyTheme(document.body.dataset.theme==='dark'?'light':'dark');
+async function refreshPrayerTimes(){const el=$('prayerStatus');if(!navigator.onLine){el.textContent='لا يوجد اتصال بالإنترنت؛ حاول التحديث عند الاتصال.';return}el.textContent='جارٍ جلب أوقات الصلاة لحمص…';try{const parts=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Damascus',day:'2-digit',month:'2-digit',year:'numeric'}).formatToParts(new Date());const part=k=>parts.find(x=>x.type===k)?.value||'00';const date=[part('day'),part('month'),part('year')].join('-');const url='https://api.aladhan.com/v1/timingsByCity/'+date+'?city=Homs&country=Syria&method=3';const res=await fetch(url,{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const j=await res.json();if(j.code!==200||!j.data?.timings)throw Error('No timings');const t=j.data.timings;for(const [id,key] of [['prFajr','Fajr'],['prSunrise','Sunrise'],['prDhuhr','Dhuhr'],['prAsr','Asr'],['prMaghrib','Maghrib'],['prIsha','Isha']])$(id).textContent=(t[key]||'—').split(' ')[0];el.textContent='تم التحديث لمدينة حمص بتاريخ '+(j.data.date?.readable||date)+' — '+(j.data.meta?.method?.name||'طريقة الحساب 3');localStorage.setItem('daftar_prayer_cache',JSON.stringify({date,timings:t,readable:j.data.date?.readable||date}))}catch(e){const c=localStorage.getItem('daftar_prayer_cache');if(c){const x=JSON.parse(c);for(const [id,key] of [['prFajr','Fajr'],['prSunrise','Sunrise'],['prDhuhr','Dhuhr'],['prAsr','Asr'],['prMaghrib','Maghrib'],['prIsha','Isha']])$(id).textContent=(x.timings[key]||'—').split(' ')[0];el.textContent='تعذر التحديث الآن؛ المعروض آخر توقيت محفوظ بتاريخ '+x.readable}else el.textContent='تعذر جلب المواقيت. تحقق من الاتصال ثم حاول مجدداً.'}}
+$('refreshPrayer').onclick=refreshPrayerTimes;
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));
 }
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===b.dataset.tab))});
 $('printBtn').onclick=()=>window.print();
-(async()=>{try{db=await openDB();const saved=localStorage.getItem('daftar_settings');if(saved)settings={...settings,...JSON.parse(saved)};updateRateUI();await load();await migrateUsdBase();if(rate()>0)await repriceProducts();updateRateUI();refreshRates();setInterval(()=>{if(document.visibilityState==='visible')refreshRates()},30*60*1000)}catch(e){alert('تعذر فتح قاعدة البيانات في هذا المتصفح. يرجى استخدام Chrome حديث.')}})();
+(async()=>{try{db=await openDB();const saved=localStorage.getItem('daftar_settings');if(saved)settings={...settings,...JSON.parse(saved)};applyTheme(settings.theme||'light');updateRateUI();await load();await migrateUsdBase();if(rate()>0)await repriceProducts();updateRateUI();refreshRates();refreshPrayerTimes();setInterval(()=>{if(document.visibilityState==='visible'){refreshRates();refreshPrayerTimes()}},60*60*1000)}catch(e){alert('تعذر فتح قاعدة البيانات في هذا المتصفح. يرجى استخدام Chrome حديث.')}})();
 </script>
 </body></html>
