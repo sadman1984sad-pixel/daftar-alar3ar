@@ -2,15 +2,15 @@
   "id": "./",
   "name": "تطبيق الأسعار السورية شرف",
   "short_name": "الأسعار شرف",
-  "description": "إدارة أسعار المواد وحساب الربح وتحويل العملات وأوقات الصلاة",
+  "description": "إدارة الأسعار والأرباح والمخزون وتصدير قوائم الأسعار",
   "lang": "ar",
   "dir": "rtl",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#f2f6fc",
-  "theme_color": "#1456a0",
+  "background_color": "#07111f",
+  "theme_color": "#102f59",
   "icons": [
     {
       "src": "icon-sharaf-192.png",
