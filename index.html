@@ -14,13 +14,16 @@ body[data-theme="dark"] input,body[data-theme="dark"] select,body[data-theme="da
 body[data-theme="dark"] .tablewrap{background:var(--card)}body[data-theme="dark"] th{background:#1c3554;color:#e5f0ff}body[data-theme="dark"] .result{background:#1b3554;color:#e5f0ff}body[data-theme="dark"] button.secondary{background:#263d59;color:#e8f0fa}body[data-theme="dark"] .calc-screen{background:#eaf1fc;color:#14253b}body[data-theme="dark"] .calc-screen input{background:transparent;color:#53637a}body[data-theme="dark"] .calc-shell{background:#071a33;border:1px solid #31547d}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif}
 header{background:linear-gradient(135deg,#071a33,#123e70 65%,#1768b5);color:white;padding:22px 16px 18px;border-radius:0 0 24px 24px;box-shadow:0 8px 24px #06172c35}
-header{position:relative;padding-left:82px}header::after{content:'';position:absolute;top:14px;left:14px;width:54px;height:54px;background:#fff url('./sharaf-transparent.png') center/contain no-repeat;border:1px solid rgba(160,190,225,.65);border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.18);pointer-events:none}@media(max-width:420px){header{padding-left:76px}header::after{width:48px;height:48px;top:12px;left:12px}}
 header h1{font-size:23px;margin:0 0 6px}header p{margin:0;color:#d5e5dc;font-size:13px}
+.brand-head{display:flex;align-items:center;justify-content:center;gap:14px;text-align:right}
+.brand-logo{width:104px;height:104px;object-fit:contain;flex:0 0 104px;filter:drop-shadow(0 3px 8px #0008)}
+.brand-title{min-width:0}
+@media(max-width:420px){.brand-head{gap:9px}.brand-logo{width:82px;height:82px;flex-basis:82px}header h1{font-size:19px}}
 main{max-width:1050px;margin:auto;padding:14px}
 .ratebox{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
 .rate{background:#ffffff17;border:1px solid #ffffff30;border-radius:12px;padding:10px}
 .rate small{display:block;color:#d5e5dc;margin-bottom:6px}.rate strong{font-size:18px}
-.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:8px;margin:14px 0}
+.tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:14px 0}
 button,.btn{border:0;border-radius:10px;padding:11px 14px;font-weight:700;font-size:14px;cursor:pointer;background:var(--blue);color:#fff}
 button.secondary{background:#e8f1fc;color:var(--blue)}button.danger{background:#fff0ee;color:var(--red)}
 .tabs button{white-space:normal;min-height:44px;line-height:1.35}.tabs button.active{background:var(--blue2);outline:2px solid #7ebaff}.card{box-shadow:0 5px 18px #102d5010}.tabs button{box-shadow:0 2px 8px #102d5012}
@@ -56,8 +59,13 @@ td .actions{display:flex;gap:5px}td button{padding:7px 9px;font-size:12px}
 </head>
 <body>
 <header>
-  <h1>تطبيق الأسعار السورية شرف</h1>
-  <p>إدارة أسعار المواد بالدولار والليرة السورية</p>
+  <div class="brand-head">
+    <img class="brand-logo" src="./sharaf-transparent.png" alt="شعار عبد الرحمن شرف">
+    <div class="brand-title">
+      <h1>تطبيق الأسعار السورية شرف</h1>
+      <p>إدارة أسعار المواد بالدولار والليرة السورية</p>
+    </div>
+  </div>
   <div class="row no-print" style="margin-top:12px;justify-content:flex-start"><button type="button" class="secondary" id="themeToggle">🌙 المظهر الداكن</button></div>
   <div class="ratebox">
     <div class="rate"><small>سعر الصرف المعتمد</small><strong id="activeRate">—</strong></div>

@@ -1,4 +1,4 @@
-const CACHE = "daftar-asaar-sharaf-v21";
+const CACHE = "daftar-asaar-sharaf-v20";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon-sharaf-192.png", "./icon-sharaf-512.png", "./sharaf-transparent.png", "./sham-cash-qr.jpg"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE)));
